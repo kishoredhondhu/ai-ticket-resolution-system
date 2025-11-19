@@ -1,0 +1,37 @@
+{
+  "submit_new_ticket": "Submit a New Ticket",
+
+  "description": "Description",
+
+  "attach_file": "Attach File (PDF/Image/Text)",
+
+  "upload_ticket": "Upload Ticket",
+
+  "similar_tickets": "Similar Historical Tickets",
+
+  "category": "Category",
+
+  "priority": "Priority",
+
+  "status": "Status",
+
+  "resolution": "Resolution",
+
+  "suggested_resolution": "Suggested Resolution",
+
+  "why_this_resolution": "Why this resolution?",
+
+  "override_suggestion": "Override Suggestion",
+
+  "audit_log": "Audit Log",
+
+  "ticket_details": "Ticket Details",
+
+  "your_feedback": "Your Feedback",
+
+  "submit_feedback": "Submit Feedback",
+
+  "dashboard": "TicketGenie Dashboard",
+
+  "history": "Ticket Resolution History"
+}
