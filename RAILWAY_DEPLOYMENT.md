@@ -1,6 +1,7 @@
 # 🚀 Railway Deployment Guide
 
 ## Prerequisites
+
 - GitHub account
 - Railway account (sign up at https://railway.app)
 - Git installed
@@ -30,16 +31,19 @@ git commit -m "Initial commit - Ready for Railway deployment"
 ### Option A: Deploy via GitHub (Recommended)
 
 1. **Sign up/Login to Railway**
+
    - Go to https://railway.app
    - Click "Login with GitHub"
 
 2. **Create New Project**
+
    - Click "New Project"
    - Select "Deploy from GitHub repo"
    - Choose your repository
    - Click "Deploy Now"
 
 3. **Configure Backend Service**
+
    - Railway will auto-detect your backend
    - Click on the service
    - Go to "Variables" tab
@@ -55,6 +59,7 @@ git commit -m "Initial commit - Ready for Railway deployment"
      ```
 
 4. **Configure Frontend Service**
+
    - Click "New Service" → "GitHub repo"
    - Select same repo
    - Set root directory: `frontend`
@@ -65,6 +70,7 @@ git commit -m "Initial commit - Ready for Railway deployment"
    - (Get backend URL from backend service settings)
 
 5. **Generate Domain**
+
    - Click on backend service
    - Go to "Settings" → "Networking"
    - Click "Generate Domain"
@@ -119,16 +125,19 @@ railway up
 ## 🐛 Troubleshooting
 
 **Backend won't start:**
+
 - Check logs in Railway dashboard
 - Verify environment variables
 - Check `requirements.txt` for missing packages
 
 **Frontend can't connect to backend:**
+
 - Verify `VITE_API_URL` is set correctly
 - Check CORS settings in backend
 - Ensure backend is running
 
 **Build fails:**
+
 - Check build logs
 - Verify `package.json` scripts
 - Check for missing dependencies
@@ -154,6 +163,7 @@ railway up
 ## 📝 Environment Variables to Set in Railway
 
 ### Backend Service:
+
 ```
 AZURE_OPENAI_ENDPOINT=https://ag-new-endpoint.openai.azure.com
    AZURE_OPENAI_KEY=your-azure-api-key-here
@@ -164,6 +174,7 @@ MIN_SIMILARITY=0.6
 ```
 
 ### Frontend Service:
+
 ```
 VITE_API_URL=https://[your-backend-url].railway.app
 ```

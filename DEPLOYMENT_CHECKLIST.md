@@ -3,22 +3,26 @@
 ## ✅ Pre-Deployment (Complete these first)
 
 - [ ] **Git repository initialized**
+
   ```bash
   git init
   ```
 
 - [ ] **GitHub repository created**
+
   - Go to https://github.com/new
   - Create new repository
   - Copy repository URL
 
 - [ ] **Files ready for commit**
+
   ```bash
   git add .
   git commit -m "Initial commit - Ready for Railway"
   ```
 
 - [ ] **Code pushed to GitHub**
+
   ```bash
   git remote add origin <your-github-url>
   git branch -M main
@@ -34,6 +38,7 @@
 ## 🚂 Railway Setup
 
 - [ ] **Sign up for Railway**
+
   - Go to https://railway.app
   - Click "Login with GitHub"
   - Authorize Railway
@@ -49,10 +54,12 @@
 ## ⚙️ Backend Configuration
 
 - [ ] **Service detected**
+
   - Railway should auto-detect Python backend
   - Check build logs
 
 - [ ] **Add environment variables**
+
   - Click on backend service
   - Go to "Variables" tab
   - Add each variable:
@@ -66,6 +73,7 @@
     ```
 
 - [ ] **Generate domain**
+
   - Go to Settings → Networking
   - Click "Generate Domain"
   - Copy URL (e.g., `https://your-app.railway.app`)
@@ -79,12 +87,14 @@
 ## 🎨 Frontend Configuration
 
 - [ ] **Add frontend service**
+
   - Click "New Service"
   - Select "GitHub repo"
   - Choose same repository
   - Set root directory: `frontend`
 
 - [ ] **Add environment variables**
+
   - Click on frontend service
   - Go to "Variables" tab
   - Add:
@@ -94,11 +104,13 @@
   - Replace with actual backend URL from previous step
 
 - [ ] **Configure build settings**
+
   - Build command: `npm run build`
   - Output directory: `dist`
   - (Railway should auto-detect this)
 
 - [ ] **Generate domain**
+
   - Go to Settings → Networking
   - Click "Generate Domain"
   - Copy URL (e.g., `https://your-frontend.railway.app`)
@@ -112,20 +124,24 @@
 ## 🧪 Post-Deployment Testing
 
 - [ ] **Backend health check**
+
   ```
   curl https://your-backend.railway.app/health
   ```
 
 - [ ] **Backend metrics**
+
   ```
   curl https://your-backend.railway.app/api/stats
   ```
 
 - [ ] **Frontend loads**
+
   - Open frontend URL in browser
   - No console errors
 
 - [ ] **Frontend connects to backend**
+
   - Try uploading a ticket
   - Check network tab for API calls
 
@@ -138,24 +154,28 @@
 ## 🐛 Troubleshooting
 
 ### Backend won't start
+
 - [ ] Check "Deployments" tab for build logs
 - [ ] Verify all environment variables are set
 - [ ] Check for errors in logs
 - [ ] Verify `requirements.txt` is correct
 
 ### Frontend won't build
+
 - [ ] Check build logs in deployments
 - [ ] Verify `VITE_API_URL` is set correctly
 - [ ] Check `package.json` scripts
 - [ ] Look for TypeScript errors
 
 ### Frontend can't connect to backend
+
 - [ ] Verify `VITE_API_URL` matches backend domain
 - [ ] Check backend CORS settings
 - [ ] Check browser console for errors
 - [ ] Verify backend is running (check health endpoint)
 
 ### Azure OpenAI not working
+
 - [ ] This is expected (firewall issue)
 - [ ] Fallback should be working
 - [ ] Check backend logs for confirmation
@@ -165,6 +185,7 @@
 ## 📊 Monitoring
 
 - [ ] **Check Railway dashboard**
+
   - Monitor resource usage
   - Check logs regularly
   - Watch for errors
@@ -179,6 +200,7 @@
 ## 💰 Cost Management
 
 - [ ] **Monitor usage**
+
   - Railway free tier: $5/month credit
   - Check usage in dashboard
   - Set up usage alerts
@@ -204,6 +226,7 @@ Your deployment is successful when:
 ## 🎉 You're Done!
 
 Share your live URL:
+
 - Frontend: `https://your-frontend.railway.app`
 - Backend API: `https://your-backend.railway.app`
 

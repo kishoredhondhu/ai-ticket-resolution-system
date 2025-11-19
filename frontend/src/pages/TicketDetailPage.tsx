@@ -1,7 +1,5 @@
 import React from "react";
 
-import { useParams } from "react-router-dom";
-
 import ResolutionPanel from "../components/ResolutionSuggestion/ResolutionPanel";
 
 import ResolutionFeedback from "../components/Feedback/ResolutionFeedback";
@@ -9,10 +7,8 @@ import ResolutionFeedback from "../components/Feedback/ResolutionFeedback";
 import { useResolutionSuggestion } from "../hooks/useResolutionSuggestion";
 
 const TicketDetailPage: React.FC = () => {
-  const { id } = useParams();
-
   const { suggestion, rationale, overrideResolution } =
-    useResolutionSuggestion(id);
+    useResolutionSuggestion();
 
   return (
     <div className="ticket-detail-page">

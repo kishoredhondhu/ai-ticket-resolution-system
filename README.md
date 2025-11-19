@@ -29,17 +29,20 @@ backend/           # FastAPI + Python
 ## 🚀 Quick Start (Local Development)
 
 ### Prerequisites
+
 - Python 3.11+
 - Node.js 18+
 - Git
 
 ### 1. Clone Repository
+
 ```bash
 git clone <your-repo-url>
 cd Hackathon_Project
 ```
 
 ### 2. Setup Backend
+
 ```bash
 cd backend
 
@@ -62,6 +65,7 @@ python app.py
 Backend runs on: http://localhost:8000
 
 ### 3. Setup Frontend
+
 ```bash
 cd frontend
 
@@ -83,6 +87,7 @@ Frontend runs on: http://localhost:5173
 ### Quick Deploy Steps:
 
 1. **Push to GitHub**
+
    ```bash
    git init
    git add .
@@ -103,6 +108,7 @@ Frontend runs on: http://localhost:5173
 ## 🔧 Configuration
 
 ### Backend Environment Variables (.env)
+
 ```properties
 AZURE_OPENAI_ENDPOINT=your-endpoint
 AZURE_OPENAI_KEY=your-key
@@ -114,6 +120,7 @@ PORT=8000
 ```
 
 ### Frontend Environment Variables
+
 ```properties
 VITE_API_URL=http://localhost:8000
 ```
@@ -123,12 +130,14 @@ VITE_API_URL=http://localhost:8000
 ## 🧪 Testing
 
 ### Backend Tests
+
 ```bash
 cd backend
 python -m pytest
 ```
 
 ### Frontend Tests
+
 ```bash
 cd frontend
 npm run test
@@ -139,11 +148,13 @@ npm run test
 ## 📊 API Endpoints
 
 ### Health Check
+
 ```
 GET /health
 ```
 
 ### Suggest Resolution
+
 ```
 POST /api/suggest-resolution
 Body: {
@@ -156,11 +167,13 @@ Body: {
 ```
 
 ### Get Metrics
+
 ```
 GET /api/metrics
 ```
 
 ### Get Stats
+
 ```
 GET /api/stats
 ```
@@ -183,16 +196,19 @@ When Azure OpenAI is unavailable (network issues, firewall, etc.), the system au
 ## 🐛 Troubleshooting
 
 ### Backend won't start
+
 - Check Python version: `python --version` (need 3.11+)
 - Verify .env file exists with correct values
 - Check logs for errors
 
 ### Frontend can't connect to backend
+
 - Verify backend is running on port 8000
 - Check CORS settings in backend
 - Update `VITE_API_URL` in frontend config
 
 ### Azure OpenAI errors (403 Forbidden)
+
 - This is likely a firewall issue
 - Connect to company VPN if available
 - Contact IT to whitelist your IP
@@ -256,6 +272,7 @@ This project is licensed under the MIT License.
 ## 📞 Support
 
 For issues or questions:
+
 - Open a GitHub issue
 - Contact the development team
 

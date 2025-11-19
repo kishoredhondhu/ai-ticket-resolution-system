@@ -5,7 +5,7 @@
 ✅ All configuration files created  
 ✅ Frontend configured for environment variables  
 ✅ Backend ready for Railway  
-✅ Documentation complete  
+✅ Documentation complete
 
 ---
 
@@ -80,6 +80,7 @@ git push -u origin main
 ## ✅ Test Your Deployment
 
 1. **Backend Health Check:**
+
    - Visit: `https://your-backend.railway.app/health`
    - Should see: `{"status": "healthy"}`
 
@@ -92,33 +93,36 @@ git push -u origin main
 
 ## 📁 Files Created for Deployment
 
-| File | Purpose |
-|------|---------|
-| `.gitignore` | Prevents committing sensitive files |
-| `backend/Procfile` | Tells Railway how to run backend |
-| `backend/runtime.txt` | Specifies Python version |
-| `railway.json` | Railway configuration |
-| `nixpacks.toml` | Build configuration |
-| `.env.example` | Template for environment variables |
-| `README.md` | Project documentation |
-| `RAILWAY_DEPLOYMENT.md` | Detailed deployment guide |
-| `DEPLOYMENT_CHECKLIST.md` | Step-by-step checklist |
+| File                      | Purpose                             |
+| ------------------------- | ----------------------------------- |
+| `.gitignore`              | Prevents committing sensitive files |
+| `backend/Procfile`        | Tells Railway how to run backend    |
+| `backend/runtime.txt`     | Specifies Python version            |
+| `railway.json`            | Railway configuration               |
+| `nixpacks.toml`           | Build configuration                 |
+| `.env.example`            | Template for environment variables  |
+| `README.md`               | Project documentation               |
+| `RAILWAY_DEPLOYMENT.md`   | Detailed deployment guide           |
+| `DEPLOYMENT_CHECKLIST.md` | Step-by-step checklist              |
 
 ---
 
 ## 🆘 Quick Troubleshooting
 
 ### Backend won't start
+
 - Check "Deployments" tab in Railway
 - View logs for errors
 - Verify environment variables are set
 
 ### Frontend can't connect
+
 - Check `VITE_API_URL` is correct
 - Verify backend is running
 - Check browser console for errors
 
 ### Azure OpenAI errors (403)
+
 - **This is expected!** (Firewall blocking)
 - Your fallback system handles this
 - App still works without Azure AI
@@ -159,6 +163,7 @@ git push -u origin main
 ## 🎉 Success!
 
 Once deployed, you'll have:
+
 - ✅ Live backend API
 - ✅ Live frontend website
 - ✅ Automatic HTTPS
