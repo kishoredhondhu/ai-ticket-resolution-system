@@ -156,11 +156,11 @@ class ResolutionResponse(BaseModel):
 
  
 
-@app.get("/")
+@app.get("/api")
 
-async def root():
+async def api_info():
 
-    """Root endpoint with service information."""
+    """API information endpoint."""
 
     return {
 
@@ -382,13 +382,24 @@ async def get_realtime_metrics():
 # Mount static files for frontend
 frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 if os.path.exists(frontend_dist):
+    # Mount static assets
     app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
     
+    # Serve index.html for root
+    @app.get("/")
+    async def serve_root():
+        """Serve frontend root."""
+        index_file = os.path.join(frontend_dist, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Frontend not found")
+    
+    # Catch-all route for SPA routing (must be last)
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
         """Serve frontend for all non-API routes."""
-        # If it's an API route, let it pass through
-        if full_path.startswith("api/") or full_path in ["health", "docs", "redoc", "openapi.json"]:
+        # If it's an API route, let it pass through to 404
+        if full_path.startswith("api") or full_path in ["health", "docs", "redoc", "openapi.json"]:
             raise HTTPException(status_code=404, detail="Not found")
         
         # Serve index.html for all other routes (SPA routing)
