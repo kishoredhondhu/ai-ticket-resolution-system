@@ -49,6 +49,10 @@ class RAGEngine:
 
         """Initialize the RAG engine."""
 
+        # Log current working directory for debugging
+        logger.info(f"Current working directory: {os.getcwd()}")
+        logger.info(f"Looking for knowledge base at: {knowledge_base_path}")
+        
         self.knowledge_base_path = knowledge_base_path
 
         self.tickets = None
@@ -194,9 +198,26 @@ class RAGEngine:
             import pandas as pd
             from sklearn.feature_extraction.text import TfidfVectorizer
             
-            excel_path = "data/Sample-Data.xlsx"
-            if not os.path.exists(excel_path):
-                logger.error(f"Sample data not found at {excel_path}")
+            # Try multiple possible paths
+            possible_paths = [
+                "data/Sample-Data.xlsx",
+                "backend/data/Sample-Data.xlsx",
+                "/app/backend/data/Sample-Data.xlsx"
+            ]
+            
+            excel_path = None
+            for path in possible_paths:
+                logger.info(f"Checking for Excel at: {path}")
+                if os.path.exists(path):
+                    excel_path = path
+                    logger.info(f"Found Excel file at: {path}")
+                    break
+            
+            if not excel_path:
+                logger.error(f"Sample data not found in any of: {possible_paths}")
+                logger.info(f"Files in current directory: {os.listdir('.')}")
+                if os.path.exists('data'):
+                    logger.info(f"Files in data/: {os.listdir('data')}")
                 return
             
             logger.info(f"Building knowledge base from {excel_path}...")
