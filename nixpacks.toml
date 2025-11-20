@@ -6,6 +6,7 @@ nixPkgs = [
   "python311Packages.numpy",
   "python311Packages.scipy",
   "python311Packages.scikit-learn",
+  "python311Packages.pandas",
   "nodejs-18_x"
 ]
 

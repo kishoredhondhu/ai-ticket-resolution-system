@@ -1,5 +1,6 @@
 # RAG Service Dependencies
-# Note: numpy, scipy, scikit-learn are provided by Nix packages
+# Note: numpy, scipy, scikit-learn, pandas are provided by Nix packages
+# This avoids GLIBC compatibility issues
 
 # Web Framework
 fastapi==0.115.0
@@ -9,11 +10,7 @@ uvicorn[standard]==0.32.0
 openai>=1.30.0
 python-dotenv==1.0.0
 
-# Vector Search
-faiss-cpu==1.9.0
-
 # Data Processing
-pandas==2.2.0
 openpyxl==3.1.2
 tqdm==4.66.4
 
