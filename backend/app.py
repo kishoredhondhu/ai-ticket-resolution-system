@@ -13,6 +13,10 @@ from fastapi import FastAPI, HTTPException
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.staticfiles import StaticFiles
+
+from fastapi.responses import FileResponse
+
 from pydantic import BaseModel
 
 from typing import List, Optional
@@ -374,6 +378,26 @@ async def get_realtime_metrics():
 
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# Mount static files for frontend
+frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+if os.path.exists(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        """Serve frontend for all non-API routes."""
+        # If it's an API route, let it pass through
+        if full_path.startswith("api/") or full_path in ["health", "docs", "redoc", "openapi.json"]:
+            raise HTTPException(status_code=404, detail="Not found")
+        
+        # Serve index.html for all other routes (SPA routing)
+        index_file = os.path.join(frontend_dist, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Frontend not found")
+else:
+    logger.warning(f"Frontend dist directory not found at {frontend_dist}")
 
  
 
