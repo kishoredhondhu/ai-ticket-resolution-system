@@ -76,7 +76,7 @@ class RAGEngine:
 
         self.top_k = int(os.getenv("TOP_K_SIMILAR", "5"))
 
-        self.min_similarity = float(os.getenv("MIN_SIMILARITY", "0.1"))  # Lower threshold for TF-IDF
+        self.min_similarity = float(os.getenv("MIN_SIMILARITY", "0.15"))  # Slightly higher for better quality matches
 
        
 
@@ -252,14 +252,17 @@ class RAGEngine:
             # Build TF-IDF vectors
             logger.info("Building TF-IDF vectors...")
             vectorizer = TfidfVectorizer(
-                max_features=1000,
+                max_features=2000,  # Increased for better vocabulary coverage
                 stop_words='english',
-                ngram_range=(1, 2)
+                ngram_range=(1, 3),  # Include trigrams for better phrase matching
+                min_df=2,  # Ignore very rare terms
+                max_df=0.8,  # Ignore very common terms
+                sublinear_tf=True  # Use log scaling for term frequency
             )
             
-            # Weight description 3x more than category for better matching
-            # This ensures tickets are matched primarily by description content
-            texts = [f"{t['category']} {t['description']} {t['description']} {t['description']}" for t in tickets]
+            # Combine category and description with smart weighting
+            # Category helps with domain filtering, description is the main content
+            texts = [f"{t['category']} {t['category']} {t['description']}" for t in tickets]
             tfidf_matrix = vectorizer.fit_transform(texts)
             
             # Save knowledge base
@@ -326,9 +329,9 @@ class RAGEngine:
 
        
 
-        # Get top k indices
+        # Get top k*2 indices to allow for better filtering
 
-        top_indices = similarities.argsort()[-k:][::-1]
+        top_indices = similarities.argsort()[-(k*2):][::-1]
 
        
 
@@ -350,7 +353,9 @@ class RAGEngine:
 
        
 
-        return similar_tickets
+        # Return only top k after filtering
+
+        return similar_tickets[:k]
 
    
 
@@ -689,8 +694,8 @@ Be specific and actionable."""
            
 
             # Combine inputs for better similarity search
-            # Weight description 3x more to match how knowledge base was built
-            query_text = f"{category} {description} {description} {description}"
+            # Match the weighting used during knowledge base building
+            query_text = f"{category} {category} {description}"
 
            
 
@@ -810,24 +815,22 @@ Be specific and actionable."""
                     ])
                     
                     # Create prompt for Hugging Face
-                    prompt = f"""You are an expert IT support assistant. Analyze these similar resolved tickets and create a refined, customized resolution for the current ticket.
+                    # Extract key info from best matches
+                    best_resolutions = "\n".join([
+                        f"{i+1}. {t['resolution'][:250]}" 
+                        for i, t in enumerate(similar_tickets[:3])
+                    ])
+                    
+                    prompt = f"""As an IT support expert, provide a concise resolution for this ticket based on similar cases.
 
-**Current Ticket:**
-Category: {category}
-Priority: {priority}
-Description: {description}
+Current Issue:
+Category: {category} | Priority: {priority}
+Problem: {description}
 
-**Similar Resolved Tickets:**
-{similar_context}
+Similar Resolutions That Worked:
+{best_resolutions}
 
-**Your Task:**
-Based on the similar tickets above, create a clear, step-by-step resolution that is:
-1. Tailored specifically to the current ticket's description
-2. Professional and easy to follow
-3. Includes all relevant troubleshooting steps
-4. Mentions when to escalate if needed
-
-Provide ONLY the resolution steps, no preamble."""
+Create a clear, actionable resolution (5-8 steps max) specifically for "{description}". Focus on practical steps, not generic advice."""
 
                     # Call Hugging Face using chat completion format
                     messages = [
@@ -839,8 +842,8 @@ Provide ONLY the resolution steps, no preamble."""
                     
                     response = self.hf_client.chat_completion(
                         messages=messages,
-                        max_tokens=600,
-                        temperature=0.7
+                        max_tokens=400,  # Reduced for faster, more concise responses
+                        temperature=0.6  # Slightly lower for more focused output
                     )
                     
                     # Extract the response text
