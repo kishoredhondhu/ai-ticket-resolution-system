@@ -789,6 +789,8 @@ Be specific and actionable."""
             deployment_name = "unknown"
 
            
+            # Debug: Check AI client status
+            logger.info(f"AI Client available: {self.has_ai_client()}, HF Client: {self.hf_client is not None}")
 
             if self.has_ai_client():
                 # Use Hugging Face AI to refine solution based on similar tickets
@@ -844,6 +846,8 @@ Provide ONLY the resolution steps, no preamble."""
                 except Exception as e:
 
                     logger.error(f"Hugging Face AI call failed: {e}")
+                    import traceback
+                    logger.error(f"Traceback: {traceback.format_exc()}")
 
                     # Fallback to template-based resolution
 
