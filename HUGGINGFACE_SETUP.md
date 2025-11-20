@@ -12,10 +12,12 @@ Your system now supports **FREE AI generation** using Hugging Face when Azure Op
 ## 🚀 Quick Setup (Optional - for unlimited rate)
 
 ### 1. Create Free Hugging Face Account
+
 1. Go to: https://huggingface.co/join
 2. Sign up (free - no credit card)
 
 ### 2. Get Your Free API Token
+
 1. Go to: https://huggingface.co/settings/tokens
 2. Click "New token"
 3. Name it: `ai-ticket-system`
@@ -26,6 +28,7 @@ Your system now supports **FREE AI generation** using Hugging Face when Azure Op
 ### 3. Add Token to Railway
 
 In Railway dashboard:
+
 1. Go to your project
 2. Click "Variables" tab
 3. Click "+ New Variable"
@@ -37,10 +40,12 @@ In Railway dashboard:
 ## 📊 Free Tier Limits
 
 **Without Token:**
+
 - ~100 requests per hour
 - Shared rate limit
 
 **With Free Token:**
+
 - 1000+ requests per day
 - Personal rate limit
 - Better performance
@@ -56,10 +61,12 @@ The system automatically:
 ## 🧪 Test It
 
 After deployment, submit a ticket with:
+
 - **Category**: Any category
 - **Description**: Something unique (to get <50% similarity)
 
 You should see in logs:
+
 ```
 ✅ Hugging Face AI initialized
 ⚠️ Low confidence (25%) - Using AI to generate custom solution
@@ -71,6 +78,7 @@ You should see in logs:
 Currently using: `mistralai/Mistral-7B-Instruct-v0.2`
 
 Other free options you can try:
+
 - `meta-llama/Meta-Llama-3-8B-Instruct`
 - `HuggingFaceH4/zephyr-7b-beta`
 - `microsoft/Phi-3-mini-4k-instruct`
@@ -78,12 +86,15 @@ Other free options you can try:
 ## 🔧 Troubleshooting
 
 **Issue**: "Rate limit exceeded"
+
 - **Solution**: Add your free Hugging Face token (see setup above)
 
 **Issue**: "Model is loading"
+
 - **Solution**: Wait 20-30 seconds, model cold starts on first use
 
 **Issue**: Still using templates
+
 - **Solution**: Check logs for Hugging Face initialization message
 
 ## 📝 Summary
