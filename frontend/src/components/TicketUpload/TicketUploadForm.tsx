@@ -387,7 +387,7 @@ const TicketUploadForm: React.FC = () => {
               </>
             )}
 
-            {similarTickets && similarTickets.length > 0 && (
+            {similarTickets && similarTickets.length > 0 && similarTickets.some(t => t.similarity_score >= 0.95) && (
               <>
                 <div className="resolution-divider"></div>
 
@@ -398,12 +398,12 @@ const TicketUploadForm: React.FC = () => {
                     <h4 className="similar-title">Similar Resolved Tickets</h4>
 
                     <span className="similar-count">
-                      {similarTickets.length}
+                      {similarTickets.filter(t => t.similarity_score >= 0.95).length}
                     </span>
                   </div>
 
                   <div className="similar-tickets-list">
-                    {similarTickets.map((ticket, index) => (
+                    {similarTickets.filter(t => t.similarity_score >= 0.95).map((ticket, index) => (
                       <div key={index} className="similar-ticket-card">
                         <div className="similar-ticket-header">
                           <span className="similar-ticket-category">
