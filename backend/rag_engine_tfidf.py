@@ -940,7 +940,7 @@ If you'd like to review the similar tickets we found, they are listed below."""
 
                     "priority": ticket.get('priority', 'N/A'),
 
-                    "similarity_score": ticket['similarity_score']
+                    "similarity_score": float(ticket['similarity_score'])  # Convert numpy float to Python float
 
                 })
 
@@ -950,7 +950,7 @@ If you'd like to review the similar tickets we found, they are listed below."""
 
                 "suggested_resolution": suggested_resolution,
 
-                "confidence": confidence,
+                "confidence": float(confidence),  # Ensure Python float
 
                 "similar_tickets": formatted_similar_tickets,
 
@@ -969,9 +969,9 @@ If you'd like to review the similar tickets we found, they are listed below."""
                 "metadata": {
                     "model": deployment_name,
                     "num_similar_tickets": len(similar_tickets),
-                    "avg_similarity": confidence,
+                    "avg_similarity": float(confidence),  # Ensure Python float
                     "resolution_strategy": "AI-generated (low confidence)" if use_ai_generation else "Context-based (high confidence)",
-                    "ai_generated": use_ai_generation
+                    "ai_generated": bool(use_ai_generation)  # Ensure Python bool
                 }
 
             }
