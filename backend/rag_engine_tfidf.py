@@ -180,10 +180,11 @@ class RAGEngine:
         
         # Build new knowledge base
         logger.info("Attempting to build knowledge base from Sample-Data.xlsx...")
-        self._build_knowledge_base_from_excel()
+        build_success = self._build_knowledge_base_from_excel()
         
-        if not os.path.exists(self.knowledge_base_path):
-            logger.warning("Failed to build knowledge base. Please run: python scripts/build_knowledge_base_tfidf.py")
+        if not build_success or not os.path.exists(self.knowledge_base_path):
+            logger.error("Failed to build knowledge base. Please run: python scripts/build_knowledge_base_tfidf.py")
+            logger.error("RAG engine will not be functional!")
             return
         
         # Load the newly built knowledge base
@@ -283,9 +284,13 @@ class RAGEngine:
                 }, f)
             
             logger.info(f"Knowledge base built successfully with {len(tickets)} tickets")
+            return True
             
         except Exception as e:
             logger.error(f"Failed to build knowledge base: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return False
 
    
 
