@@ -3,8 +3,9 @@
 export const API_CONFIG = {
   // RAG Service (Python FastAPI)
   // Use relative URL in production (served from same backend), localhost in development
-  RAG_SERVICE_URL: import.meta.env.VITE_API_URL || 
-                   (import.meta.env.PROD ? "" : "http://localhost:8000"),
+  RAG_SERVICE_URL:
+    import.meta.env.VITE_API_URL ||
+    (import.meta.env.PROD ? "" : "http://localhost:8000"),
 
   // Legacy backend (if needed)
   BACKEND_URL: import.meta.env.VITE_BACKEND_URL || "http://localhost:8080",
