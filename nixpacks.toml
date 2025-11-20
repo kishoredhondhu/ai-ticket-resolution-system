@@ -20,7 +20,8 @@ cmds = [
 
 [phases.build]
 cmds = [
-  "cd frontend && npm run build"
+  "cd frontend && npm run build",
+  ". /opt/venv/bin/activate && cd backend && python scripts/build_knowledge_base_tfidf.py"
 ]
 
 [start]
