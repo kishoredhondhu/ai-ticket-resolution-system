@@ -149,9 +149,15 @@ class RAGEngine:
 
             logger.warning(f"Knowledge base not found at {self.knowledge_base_path}")
 
-            logger.warning("Please run: python scripts/build_knowledge_base_tfidf.py")
+            logger.info("Attempting to build knowledge base from Sample-Data.xlsx...")
 
-            return
+            self._build_knowledge_base_from_excel()
+
+            if not os.path.exists(self.knowledge_base_path):
+
+                logger.warning("Failed to build knowledge base. Please run: python scripts/build_knowledge_base_tfidf.py")
+
+                return
 
        
 
@@ -180,6 +186,77 @@ class RAGEngine:
             logger.error(f"Failed to load knowledge base: {e}")
 
             raise
+
+    
+    def _build_knowledge_base_from_excel(self):
+        """Build knowledge base from Excel file on startup."""
+        try:
+            import pandas as pd
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            
+            excel_path = "data/Sample-Data.xlsx"
+            if not os.path.exists(excel_path):
+                logger.error(f"Sample data not found at {excel_path}")
+                return
+            
+            logger.info(f"Building knowledge base from {excel_path}...")
+            
+            # Read Excel file
+            df = pd.read_excel(excel_path)
+            
+            # Detect columns (simple version)
+            col_mapping = {}
+            for col in df.columns:
+                col_lower = col.strip().lower()
+                if 'category' in col_lower or 'type' in col_lower:
+                    col_mapping['category'] = col
+                elif 'description' in col_lower or 'issue' in col_lower:
+                    col_mapping['description'] = col
+                elif 'resolution' in col_lower or 'solution' in col_lower:
+                    col_mapping['resolution'] = col
+                elif 'priority' in col_lower:
+                    col_mapping['priority'] = col
+            
+            if 'description' not in col_mapping or 'resolution' not in col_mapping:
+                logger.error("Could not find required columns (description, resolution)")
+                return
+            
+            # Build tickets list
+            tickets = []
+            for idx, row in df.iterrows():
+                ticket = {
+                    'ticket_id': f"T{idx+1:04d}",
+                    'category': row.get(col_mapping.get('category', ''), 'General'),
+                    'description': str(row[col_mapping['description']]),
+                    'resolution': str(row[col_mapping['resolution']]),
+                    'priority': row.get(col_mapping.get('priority', ''), 'Medium')
+                }
+                tickets.append(ticket)
+            
+            # Build TF-IDF vectors
+            logger.info("Building TF-IDF vectors...")
+            vectorizer = TfidfVectorizer(
+                max_features=1000,
+                stop_words='english',
+                ngram_range=(1, 2)
+            )
+            
+            texts = [f"{t['category']} {t['description']}" for t in tickets]
+            tfidf_matrix = vectorizer.fit_transform(texts)
+            
+            # Save knowledge base
+            os.makedirs(os.path.dirname(self.knowledge_base_path), exist_ok=True)
+            with open(self.knowledge_base_path, 'wb') as f:
+                pickle.dump({
+                    'tickets': tickets,
+                    'vectorizer': vectorizer,
+                    'tfidf_matrix': tfidf_matrix
+                }, f)
+            
+            logger.info(f"Knowledge base built successfully with {len(tickets)} tickets")
+            
+        except Exception as e:
+            logger.error(f"Failed to build knowledge base: {e}")
 
    
 
