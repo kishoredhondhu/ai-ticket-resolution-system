@@ -12,11 +12,9 @@ uvicorn[standard]==0.32.0
 
  
 
-# Azure OpenAI
-
-openai>=1.30.0
-
+# AI Integration
 python-dotenv==1.0.0
+huggingface_hub>=0.20.0  # Free AI for resolution refinement
 
 
  

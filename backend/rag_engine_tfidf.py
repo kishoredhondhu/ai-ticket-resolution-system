@@ -21,8 +21,6 @@ import logging
 
 import time
 
-from openai import AzureOpenAI
-
 from sklearn.metrics.pairwise import cosine_similarity
 
 from metrics import metrics_tracker
@@ -31,6 +29,14 @@ from metrics import metrics_tracker
  
 
 logger = logging.getLogger(__name__)
+
+# Import Hugging Face for AI generation
+try:
+    from huggingface_hub import InferenceClient
+    HUGGINGFACE_AVAILABLE = True
+except ImportError:
+    HUGGINGFACE_AVAILABLE = False
+    logger.warning("huggingface_hub not installed. Please install: pip install huggingface_hub")
 
 
  
@@ -61,7 +67,8 @@ class RAGEngine:
 
         self.tfidf_matrix = None
 
-        self.client = None
+        self.hf_client = None  # Hugging Face client
+        self.ai_provider = "huggingface"  # Only using Hugging Face
 
        
 
@@ -73,9 +80,9 @@ class RAGEngine:
 
        
 
-        # Initialize Azure OpenAI client
+        # Initialize Hugging Face AI
 
-        self._init_azure_client()
+        self._init_huggingface_client()
 
        
 
@@ -85,63 +92,40 @@ class RAGEngine:
 
    
 
-    def _init_azure_client(self):
-
-        """Initialize Azure OpenAI client."""
-
+    def _init_huggingface_client(self) -> bool:
+        """Initialize Hugging Face client for AI-powered resolutions. Returns True if successful."""
+        if not HUGGINGFACE_AVAILABLE:
+            logger.warning("Hugging Face not available. Install: pip install huggingface_hub")
+            return False
+        
         try:
-
-            # Remove proxy environment variables
-
-            proxy_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']
-
-            for var in proxy_vars:
-
-                if var in os.environ:
-
-                    del os.environ[var]
-
-           
-
-            endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-
-            api_key = os.getenv("AZURE_OPENAI_KEY")
-
-            api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2023-05-15")
-
-           
-
-            if not endpoint or not api_key:
-
-                logger.warning("Azure OpenAI credentials not configured. Service will run in limited mode.")
-
-                logger.warning("Set AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_KEY in .env file")
-
-                self.client = None
-
-                return
-
-           
-
-            self.client = AzureOpenAI(
-
-                azure_endpoint=endpoint,
-
-                api_key=api_key,
-
-                api_version=api_version
-
+            # Get Hugging Face API token (optional - works without it but with rate limits)
+            hf_token = os.getenv("HUGGINGFACE_API_TOKEN")
+            
+            # Initialize Hugging Face Inference Client
+            # Using Mistral-7B-Instruct (free and fast)
+            self.hf_client = InferenceClient(
+                model="mistralai/Mistral-7B-Instruct-v0.2",
+                token=hf_token  # None = use free tier
             )
-
-            logger.info("Azure OpenAI client initialized successfully")
-
+            
+            if hf_token:
+                logger.info("✅ Hugging Face AI initialized with API token (no rate limits)")
+            else:
+                logger.info("✅ Hugging Face AI initialized (free tier - limited rate)")
+                logger.info("   Get free API token at: https://huggingface.co/settings/tokens")
+            
+            self.ai_provider = "huggingface"
+            return True
+            
         except Exception as e:
-
-            logger.error(f"Failed to initialize Azure client: {e}")
-
-            logger.warning("Service will run in limited mode (similarity search only)")
-
-            self.client = None
+            logger.error(f"Failed to initialize Hugging Face: {e}")
+            self.hf_client = None
+            return False
+    
+    def has_ai_client(self) -> bool:
+        """Check if Hugging Face AI client is available."""
+        return self.hf_client is not None
 
    
 
@@ -271,7 +255,9 @@ class RAGEngine:
                 ngram_range=(1, 2)
             )
             
-            texts = [f"{t['category']} {t['description']}" for t in tickets]
+            # Weight description 3x more than category for better matching
+            # This ensures tickets are matched primarily by description content
+            texts = [f"{t['category']} {t['description']} {t['description']} {t['description']}" for t in tickets]
             tfidf_matrix = vectorizer.fit_transform(texts)
             
             # Save knowledge base
@@ -397,7 +383,7 @@ Please adapt the steps above to your specific situation. If you need further ass
 
         Generate an AI-powered resolution when no similar tickets are found.
 
-        Uses Azure OpenAI to provide intelligent troubleshooting steps.
+        Uses Azure OpenAI or Hugging Face (free alternative) to provide intelligent troubleshooting steps.
 
         """
 
@@ -468,34 +454,49 @@ Include:
 
 Format your response clearly with numbered steps."""
 
+            
+            # Try Azure OpenAI first
+            if self.client and self.ai_provider == "azure":
+                deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
+               
+                response = self.client.chat.completions.create(
 
- 
+                    model=deployment_name,
 
-            deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
+                    messages=[
 
-           
+                        {"role": "system", "content": system_prompt},
 
-            response = self.client.chat.completions.create(
+                        {"role": "user", "content": user_query}
 
-                model=deployment_name,
+                    ],
 
-                messages=[
+                    temperature=0.7,
 
-                    {"role": "system", "content": system_prompt},
+                    max_tokens=800  # Allow longer responses for detailed troubleshooting
 
-                    {"role": "user", "content": user_query}
+                )
 
-                ],
+               
 
-                temperature=0.7,
-
-                max_tokens=800  # Allow longer responses for detailed troubleshooting
-
-            )
-
-           
-
-            ai_resolution = response.choices[0].message.content
+                ai_resolution = response.choices[0].message.content
+            
+            # Fallback to Hugging Face (free alternative)
+            elif self.hf_client and self.ai_provider == "huggingface":
+                # Combine system and user prompts for Hugging Face
+                full_prompt = f"{system_prompt}\n\n{user_query}"
+                
+                response = self.hf_client.text_generation(
+                    full_prompt,
+                    max_new_tokens=800,
+                    temperature=0.7,
+                    return_full_text=False
+                )
+                
+                ai_resolution = response
+            
+            else:
+                raise Exception("No AI provider available")
 
            
 
@@ -685,8 +686,8 @@ Be specific and actionable."""
            
 
             # Combine inputs for better similarity search
-
-            query_text = f"{category} {description}"
+            # Weight description 3x more to match how knowledge base was built
+            query_text = f"{category} {description} {description} {description}"
 
            
 
@@ -708,7 +709,7 @@ Be specific and actionable."""
                 # Generate AI-powered solution even without similar tickets
                 generation_start_time = time.time()
                 
-                if self.client:
+                if self.has_ai_client():
                     # Use Azure OpenAI to generate solution without similar tickets
                     ai_resolution = self._generate_ai_fallback_resolution(
                         category, priority, description
@@ -777,82 +778,69 @@ Be specific and actionable."""
 
             generation_start_time = time.time()
             
-            # Calculate average similarity to decide strategy
+            # Calculate average similarity
             avg_similarity = np.mean([t['similarity_score'] for t in similar_tickets])
             
-            # Strategy: Use AI-generated solution if similarity is low (< 50%)
-            LOW_CONFIDENCE_THRESHOLD = 0.50
-            use_ai_generation = avg_similarity < LOW_CONFIDENCE_THRESHOLD
+            # NEW STRATEGY: Always use AI to refine solutions (even 100% matches)
+            # This ensures every resolution is properly adapted and refined
+            use_ai_refinement = True
 
            
 
-            if self.client and use_ai_generation:
-                # Low confidence - Use AI to generate custom solution
-                logger.info(f"⚠️  Low confidence ({avg_similarity:.1%}) - Using AI to generate custom solution")
+            if self.has_ai_client():
+                # Use Hugging Face AI to refine solution based on similar tickets
+                logger.info(f"🤖 Using AI to refine resolution (confidence: {avg_similarity:.1%})")
                 
                 try:
-                    ai_resolution = self._generate_ai_fallback_resolution(
-                        category, priority, description
+                    # Build context from similar tickets
+                    similar_context = "\n\n".join([
+                        f"Similar Ticket #{i+1} (Match: {t['similarity_score']:.0%}):\n"
+                        f"Category: {t['category']}\n"
+                        f"Description: {t['description'][:200]}\n"
+                        f"Resolution: {t['resolution'][:300]}"
+                        for i, t in enumerate(similar_tickets[:3])  # Top 3 matches
+                    ])
+                    
+                    # Create prompt for Hugging Face
+                    prompt = f"""You are an expert IT support assistant. Analyze these similar resolved tickets and create a refined, customized resolution for the current ticket.
+
+**Current Ticket:**
+Category: {category}
+Priority: {priority}
+Description: {description}
+
+**Similar Resolved Tickets:**
+{similar_context}
+
+**Your Task:**
+Based on the similar tickets above, create a clear, step-by-step resolution that is:
+1. Tailored specifically to the current ticket's description
+2. Professional and easy to follow
+3. Includes all relevant troubleshooting steps
+4. Mentions when to escalate if needed
+
+Provide ONLY the resolution steps, no preamble."""
+
+                    # Call Hugging Face
+                    response = self.hf_client.text_generation(
+                        prompt,
+                        max_new_tokens=600,
+                        temperature=0.7,
+                        return_full_text=False
                     )
                     
-                    # Add context about similar tickets found
-                    suggested_resolution = f"""{ai_resolution}
+                    suggested_resolution = f"""**🤖 AI-Refined Resolution (Based on {avg_similarity:.0%} Match)**
+
+{response}
 
 ---
-**📋 Similar Tickets Reference:**
-We found {len(similar_tickets)} similar ticket(s) with {avg_similarity:.0%} match, but the similarity was low. The above solution was generated by AI based on general IT support knowledge and best practices.
-
-If you'd like to review the similar tickets we found, they are listed below."""
+*This solution was generated by AI based on {len(similar_tickets)} similar resolved ticket(s).*"""
                     
-                    deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
-                    
-                except Exception as e:
-                    logger.error(f"AI generation failed: {e}")
-                    # Fallback to template
-                    suggested_resolution = self._generate_template_resolution(similar_tickets[0])
-                    deployment_name = "template-fallback"
-                    
-            elif self.client:
-
-                # High confidence - Use Azure OpenAI with similar tickets context
-
-                system_prompt, user_query = self._build_prompt(
-
-                    category, priority, description, similar_tickets
-
-                )
-
-               
-
-                deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
-
-               
-
-                try:
-
-                    response = self.client.chat.completions.create(
-
-                        model=deployment_name,
-
-                        messages=[
-
-                            {"role": "system", "content": system_prompt},
-
-                            {"role": "user", "content": user_query}
-
-                        ],
-
-                        temperature=0.7,
-
-                        max_tokens=500
-
-                    )
-
-                    suggested_resolution = response.choices[0].message.content
+                    deployment_name = "mistralai/Mistral-7B-Instruct-v0.2"
 
                 except Exception as e:
 
-                    logger.error(f"Azure OpenAI API call failed: {e}")
+                    logger.error(f"Hugging Face AI call failed: {e}")
 
                     # Fallback to template-based resolution
 
@@ -900,10 +888,7 @@ If you'd like to review the similar tickets we found, they are listed below."""
             logger.info(f"📊 Similar tickets found: {len(similar_tickets)}")
 
             logger.info(f"🎯 Confidence: {confidence:.4f}")
-            if use_ai_generation:
-                logger.info(f"🤖 Resolution method: AI-Generated (Low confidence)")
-            else:
-                logger.info(f"📋 Resolution method: Context-based (High confidence)")
+            logger.info(f"🤖 Resolution method: AI-Refined (Hugging Face)")
 
             logger.info("=" * 60)
 
@@ -954,7 +939,7 @@ If you'd like to review the similar tickets we found, they are listed below."""
 
                 "similar_tickets": formatted_similar_tickets,
 
-                "method": "ai-generated" if use_ai_generation else "context-based",
+                "method": "ai-refined",
 
                 "timing": {
 
@@ -968,10 +953,11 @@ If you'd like to review the similar tickets we found, they are listed below."""
 
                 "metadata": {
                     "model": deployment_name,
+                    "ai_provider": self.ai_provider if self.has_ai_client() else "template",
                     "num_similar_tickets": len(similar_tickets),
                     "avg_similarity": float(confidence),  # Ensure Python float
-                    "resolution_strategy": "AI-generated (low confidence)" if use_ai_generation else "Context-based (high confidence)",
-                    "ai_generated": bool(use_ai_generation)  # Ensure Python bool
+                    "resolution_strategy": "AI-Refined Resolution",
+                    "ai_generated": True  # Always using AI now
                 }
 
             }
