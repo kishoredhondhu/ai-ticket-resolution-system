@@ -14,14 +14,14 @@ nixPkgs = [
 cmds = [
   "python -m venv /opt/venv",
   ". /opt/venv/bin/activate && cd backend && pip install --no-cache-dir -r requirements.txt",
-  "cd frontend && npm install"
+  "cd frontend && npm install",
+  "chmod +x start.sh"
 ]
 
 [phases.build]
 cmds = [
-  "cd frontend && npm run build",
-  "chmod +x start.sh"
+  "cd frontend && npm run build"
 ]
 
 [start]
-cmd = "./start.sh"
+cmd = "bash start.sh"
