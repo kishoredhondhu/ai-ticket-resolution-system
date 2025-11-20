@@ -43,6 +43,7 @@ frontend/build/
 backend/data/*.json
 backend/data/*.csv
 backend/data/*.xlsx
+!backend/data/Sample-Data.xlsx
 !backend/data/.gitkeep
 
 # Test coverage
