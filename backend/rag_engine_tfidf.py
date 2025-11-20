@@ -76,7 +76,7 @@ class RAGEngine:
 
         self.top_k = int(os.getenv("TOP_K_SIMILAR", "5"))
 
-        self.min_similarity = float(os.getenv("MIN_SIMILARITY", "0.15"))  # Slightly higher for better quality matches
+        self.min_similarity = float(os.getenv("MIN_SIMILARITY", "0.25"))  # Higher threshold for more relevant matches
 
        
 
@@ -252,17 +252,18 @@ class RAGEngine:
             # Build TF-IDF vectors
             logger.info("Building TF-IDF vectors...")
             vectorizer = TfidfVectorizer(
-                max_features=2000,  # Increased for better vocabulary coverage
+                max_features=3000,  # Increased for better vocabulary coverage
                 stop_words='english',
                 ngram_range=(1, 3),  # Include trigrams for better phrase matching
-                min_df=2,  # Ignore very rare terms
-                max_df=0.8,  # Ignore very common terms
-                sublinear_tf=True  # Use log scaling for term frequency
+                min_df=1,  # Keep rare but specific terms (like "Teams", "login")
+                max_df=0.7,  # More aggressive filtering of common terms
+                sublinear_tf=True,  # Use log scaling for term frequency
+                token_pattern=r'(?u)\b[a-zA-Z][a-zA-Z]+\b'  # Only words with 2+ letters
             )
             
             # Combine category and description with smart weighting
-            # Category helps with domain filtering, description is the main content
-            texts = [f"{t['category']} {t['category']} {t['description']}" for t in tickets]
+            # Category 3x weight helps category matching, description is the main content
+            texts = [f"{t['category']} {t['category']} {t['category']} {t['description']}" for t in tickets]
             tfidf_matrix = vectorizer.fit_transform(texts)
             
             # Save knowledge base
@@ -285,11 +286,11 @@ class RAGEngine:
 
    
 
-    def find_similar_tickets(self, query_text: str, k: int = None) -> List[Dict]:
+    def find_similar_tickets(self, query_text: str, k: int = None, category: str = None) -> List[Dict]:
 
         """
 
-        Find similar tickets using TF-IDF similarity.
+        Find similar tickets using TF-IDF similarity with category filtering.
 
        
 
@@ -298,6 +299,7 @@ class RAGEngine:
             query_text: The ticket description to find similar tickets for
 
             k: Number of similar tickets to return
+            category: Optional category to prioritize in results
 
        
 
@@ -329,13 +331,17 @@ class RAGEngine:
 
        
 
-        # Get top k*2 indices to allow for better filtering
+        # Get top k*3 indices to allow for category filtering
 
-        top_indices = similarities.argsort()[-(k*2):][::-1]
+        top_indices = similarities.argsort()[-(k*3):][::-1]
 
        
 
-        # Build result list
+        # Extract key terms from query for keyword matching
+        query_lower = query_text.lower()
+        query_words = set(query_lower.split())
+        
+        # Build result list with category and keyword boosting
 
         similar_tickets = []
 
@@ -346,14 +352,31 @@ class RAGEngine:
             if score >= self.min_similarity:
 
                 ticket = self.tickets[idx].copy()
-
+                
+                # Apply category boost if categories match
+                if category and ticket.get('category', '').lower() == category.lower():
+                    # Boost by 30% for exact category match
+                    score = min(score * 1.3, 1.0)
+                
+                # Apply keyword boost for important matching terms
+                ticket_text = f"{ticket.get('description', '')} {ticket.get('resolution', '')}".lower()
+                ticket_words = set(ticket_text.split())
+                
+                # Check for important keyword matches (login, teams, password, etc.)
+                important_keywords = query_words & ticket_words
+                if len(important_keywords) >= 2:  # At least 2 matching important words
+                    score = min(score * 1.15, 1.0)  # 15% boost
+                
                 ticket['similarity_score'] = score
 
                 similar_tickets.append(ticket)
 
        
 
-        # Return only top k after filtering
+        # Sort by final score (after category boosting)
+        similar_tickets.sort(key=lambda x: x['similarity_score'], reverse=True)
+
+        # Return only top k after filtering and sorting
 
         return similar_tickets[:k]
 
@@ -694,8 +717,8 @@ Be specific and actionable."""
            
 
             # Combine inputs for better similarity search
-            # Match the weighting used during knowledge base building
-            query_text = f"{category} {category} {description}"
+            # Match the weighting used during knowledge base building (3x category weight)
+            query_text = f"{category} {category} {category} {description}"
 
            
 
@@ -703,7 +726,7 @@ Be specific and actionable."""
 
             search_start_time = time.time()
 
-            similar_tickets = self.find_similar_tickets(query_text, k=self.top_k)
+            similar_tickets = self.find_similar_tickets(query_text, k=self.top_k, category=category)
 
             search_time = time.time() - search_start_time
 
