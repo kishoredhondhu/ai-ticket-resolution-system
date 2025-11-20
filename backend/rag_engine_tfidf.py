@@ -784,6 +784,9 @@ Be specific and actionable."""
             # NEW STRATEGY: Always use AI to refine solutions (even 100% matches)
             # This ensures every resolution is properly adapted and refined
             use_ai_refinement = True
+            
+            # Initialize deployment_name with default
+            deployment_name = "unknown"
 
            
 
@@ -845,6 +848,7 @@ Provide ONLY the resolution steps, no preamble."""
                     # Fallback to template-based resolution
 
                     suggested_resolution = self._generate_template_resolution(similar_tickets[0])
+                    deployment_name = "template-fallback"
 
             else:
 
