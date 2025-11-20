@@ -148,47 +148,55 @@ class RAGEngine:
     def _load_knowledge_base(self):
 
         """Load the pre-built knowledge base."""
-
-        if not os.path.exists(self.knowledge_base_path):
-
-            logger.warning(f"Knowledge base not found at {self.knowledge_base_path}")
-
-            logger.info("Attempting to build knowledge base from Sample-Data.xlsx...")
-
-            self._build_knowledge_base_from_excel()
-
-            if not os.path.exists(self.knowledge_base_path):
-
-                logger.warning("Failed to build knowledge base. Please run: python scripts/build_knowledge_base_tfidf.py")
-
-                return
-
-       
-
-        try:
-
-            with open(self.knowledge_base_path, 'rb') as f:
-
-                data = pickle.load(f)
-
+        
+        # Check if knowledge base exists and try to load it
+        kb_exists = os.path.exists(self.knowledge_base_path)
+        
+        if kb_exists:
+            try:
+                # Try to load it
+                with open(self.knowledge_base_path, 'rb') as f:
+                    data = pickle.load(f)
+                    # Test if vectorizer works
+                    test_text = ["test"]
+                    data['vectorizer'].transform(test_text)
+                    
+                # If we got here, it works!
                 self.tickets = data['tickets']
-
                 self.vectorizer = data['vectorizer']
-
                 self.tfidf_matrix = data['tfidf_matrix']
-
-               
-
-            logger.info(f"Loaded knowledge base with {len(self.tickets)} tickets")
-
+                logger.info(f"Loaded knowledge base with {len(self.tickets)} tickets")
+                logger.info(f"TF-IDF matrix shape: {self.tfidf_matrix.shape}")
+                return
+                
+            except Exception as e:
+                logger.warning(f"Existing knowledge base is incompatible: {e}")
+                logger.info("Will rebuild knowledge base...")
+                # Delete the incompatible file
+                try:
+                    os.remove(self.knowledge_base_path)
+                except:
+                    pass
+        
+        # Build new knowledge base
+        logger.info("Attempting to build knowledge base from Sample-Data.xlsx...")
+        self._build_knowledge_base_from_excel()
+        
+        if not os.path.exists(self.knowledge_base_path):
+            logger.warning("Failed to build knowledge base. Please run: python scripts/build_knowledge_base_tfidf.py")
+            return
+        
+        # Load the newly built knowledge base
+        try:
+            with open(self.knowledge_base_path, 'rb') as f:
+                data = pickle.load(f)
+                self.tickets = data['tickets']
+                self.vectorizer = data['vectorizer']
+                self.tfidf_matrix = data['tfidf_matrix']
+            logger.info(f"Loaded newly built knowledge base with {len(self.tickets)} tickets")
             logger.info(f"TF-IDF matrix shape: {self.tfidf_matrix.shape}")
-
-           
-
         except Exception as e:
-
-            logger.error(f"Failed to load knowledge base: {e}")
-
+            logger.error(f"Failed to load newly built knowledge base: {e}")
             raise
 
     
