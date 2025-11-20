@@ -6,8 +6,6 @@ import DashboardPage from "./pages/DashboardPage";
 
 import TicketDetailPage from "./pages/TicketDetailPage";
 
-import HistoryPage from "./pages/HistoryPage";
-
 import "./styles/main.scss";
 
 import "./App.css";
@@ -49,12 +47,6 @@ function App() {
           <Link to="/" className="app-logo">
             TicketGenie
           </Link>
-
-          <nav className="app-nav">
-            <Link to="/">Dashboard</Link>
-
-            <Link to="/history">History</Link>
-          </nav>
         </div>
       </header>
 
@@ -64,8 +56,6 @@ function App() {
             <Route path="/" element={<DashboardPage />} />
 
             <Route path="/ticket/:id" element={<TicketDetailPage />} />
-
-            <Route path="/history" element={<HistoryPage />} />
           </Routes>
         </PageTransition>
       </main>

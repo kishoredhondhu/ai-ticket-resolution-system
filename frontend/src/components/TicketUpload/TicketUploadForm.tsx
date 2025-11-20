@@ -1,6 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-
-import type { DragEvent } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useUploadTicket } from "../../hooks/useUploadTicket";
 
@@ -17,13 +15,9 @@ import "./TicketUploadForm.css";
  */
 
 const TicketUploadForm: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-
   const [description, setDescription] = useState("");
 
   const [category, setCategory] = useState("");
-
-  const [isDragging, setIsDragging] = useState(false);
 
   const [priority, setPriority] = useState("Medium");
 
@@ -34,8 +28,6 @@ const TicketUploadForm: React.FC = () => {
   const [submittedDescription, setSubmittedDescription] = useState("");
 
   const [submittedPriority, setSubmittedPriority] = useState("");
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { uploadTicket, loading, error, ticket } = useUploadTicket();
 
@@ -79,96 +71,6 @@ const TicketUploadForm: React.FC = () => {
     }
   }, [ticket]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files?.[0] ?? null);
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    setIsDragging(false);
-
-    const droppedFile = e.dataTransfer.files?.[0];
-
-    if (droppedFile) {
-      setFile(droppedFile);
-    }
-  };
-
-  const handleDropZoneClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleRemoveFile = () => {
-    setFile(null);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const getFileIcon = () => {
-    if (!file) return "📎";
-
-    const fileType = file.type;
-
-    const fileExtension = file.name.split(".").pop()?.toLowerCase();
-
-    if (fileType === "application/pdf" || fileExtension === "pdf") {
-      return "📄";
-    } else if (
-      fileType.startsWith("image/") ||
-      ["png", "jpg", "jpeg", "gif", "bmp"].includes(fileExtension || "")
-    ) {
-      return "🖼️";
-    } else if (fileType === "text/plain" || fileExtension === "txt") {
-      return "📝";
-    }
-
-    return "📎";
-  };
-
-  const getFileTypeLabel = () => {
-    if (!file) return "";
-
-    const fileType = file.type;
-
-    const fileExtension = file.name.split(".").pop()?.toLowerCase();
-
-    if (fileType === "application/pdf" || fileExtension === "pdf") {
-      return "PDF Document";
-    } else if (
-      fileType.startsWith("image/") ||
-      ["png", "jpg", "jpeg", "gif", "bmp"].includes(fileExtension || "")
-    ) {
-      return "Image File (OCR)";
-    } else if (fileType === "text/plain" || fileExtension === "txt") {
-      return "Text File";
-    }
-
-    return "File";
-  };
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return bytes + " B";
-
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -196,7 +98,7 @@ const TicketUploadForm: React.FC = () => {
       });
     }, 100);
 
-    await uploadTicket({ file, description, category, priority });
+    await uploadTicket({ file: null, description, category, priority });
 
     console.log("Ticket data received:", ticket);
 
@@ -221,8 +123,6 @@ const TicketUploadForm: React.FC = () => {
     // Reset form after successful upload
 
     setTimeout(() => {
-      setFile(null);
-
       setDescription("");
 
       setCategory("");
@@ -230,10 +130,6 @@ const TicketUploadForm: React.FC = () => {
       setPriority("Medium");
 
       setUploadProgress(0);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }, 1000);
   };
 
@@ -302,82 +198,10 @@ const TicketUploadForm: React.FC = () => {
         <div className="char-counter">{description.length} characters</div>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">
-          <span className="label-text">Attach File</span>
-
-          <span className="label-required">*</span>
-        </label>
-
-        <div
-          className={`drop-zone ${isDragging ? "dragging" : ""} ${
-            file ? "has-file" : ""
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={handleDropZoneClick}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileChange}
-            accept=".pdf,.png,.jpg,.jpeg,.txt"
-            required
-            style={{ display: "none" }}
-          />
-
-          {!file ? (
-            <div className="drop-zone-content">
-              <div className="drop-icon">📤</div>
-
-              <div className="drop-text">
-                <span className="drop-primary">Drag & drop your file here</span>
-
-                <span className="drop-secondary">or click to browse</span>
-              </div>
-
-              <div className="drop-formats">
-                Supported: PDF, PNG, JPG, JPEG, TXT
-              </div>
-            </div>
-          ) : (
-            <div className="file-preview">
-              <div className="file-icon-large">{getFileIcon()}</div>
-
-              <div className="file-details">
-                <div className="file-name">{file.name}</div>
-
-                <div className="file-meta">
-                  <span className="file-type">{getFileTypeLabel()}</span>
-
-                  <span className="file-separator">•</span>
-
-                  <span className="file-size">{formatFileSize(file.size)}</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="file-remove"
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  handleRemoveFile();
-                }}
-                aria-label="Remove file"
-              >
-                ✕
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
       <button
         type="submit"
         className="btn-submit"
-        disabled={loading || !file || !description || !category}
+        disabled={loading || !description || !category}
       >
         {loading ? (
           <span className="btn-loading">
