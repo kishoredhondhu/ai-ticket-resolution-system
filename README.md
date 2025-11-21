@@ -179,7 +179,7 @@ curl -X POST http://localhost:8000/api/suggest-resolution \
   -H "Content-Type: application/json" \
   -d '{
         "category": "Application",
-        "priority": "High",
+        "priority": "Critical",
         "description": "Teams is stuck at signing in"
       }'
 ```
