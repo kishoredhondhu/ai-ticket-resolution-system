@@ -991,7 +991,11 @@
 
   height: 1.75rem;
 
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.15)
+  );
 
   border-radius: 50%;
 
@@ -1015,7 +1019,12 @@
 
   height: 1px;
 
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
 
   margin: 2rem 0 1rem 0;
 }

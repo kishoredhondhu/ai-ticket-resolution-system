@@ -387,49 +387,60 @@ const TicketUploadForm: React.FC = () => {
               </>
             )}
 
-            {similarTickets && similarTickets.length > 0 && similarTickets.some(t => t.similarity_score >= 0.95) && (
-              <>
-                <div className="resolution-divider"></div>
+            {similarTickets &&
+              similarTickets.length > 0 &&
+              similarTickets.some((t) => t.similarity_score >= 0.95) && (
+                <>
+                  <div className="resolution-divider"></div>
 
-                <div className="similar-tickets-section">
-                  <div className="similar-header">
-                    <span className="similar-icon">🔍</span>
+                  <div className="similar-tickets-section">
+                    <div className="similar-header">
+                      <span className="similar-icon">🔍</span>
 
-                    <h4 className="similar-title">Similar Resolved Tickets</h4>
+                      <h4 className="similar-title">
+                        Similar Resolved Tickets
+                      </h4>
 
-                    <span className="similar-count">
-                      {similarTickets.filter(t => t.similarity_score >= 0.95).length}
-                    </span>
+                      <span className="similar-count">
+                        {
+                          similarTickets.filter(
+                            (t) => t.similarity_score >= 0.95
+                          ).length
+                        }
+                      </span>
+                    </div>
+
+                    <div className="similar-tickets-list">
+                      {similarTickets
+                        .filter((t) => t.similarity_score >= 0.95)
+                        .map((ticket, index) => (
+                          <div key={index} className="similar-ticket-card">
+                            <div className="similar-ticket-header">
+                              <span className="similar-ticket-category">
+                                {ticket.category}
+                              </span>
+
+                              <span className="similarity-score">
+                                {(ticket.similarity_score * 100).toFixed(0)}%
+                                match
+                              </span>
+                            </div>
+
+                            <p className="similar-ticket-description">
+                              {ticket.description}
+                            </p>
+
+                            <div className="similar-ticket-resolution">
+                              <strong>Resolution:</strong>
+
+                              <p>{ticket.resolution}</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
                   </div>
-
-                  <div className="similar-tickets-list">
-                    {similarTickets.filter(t => t.similarity_score >= 0.95).map((ticket, index) => (
-                      <div key={index} className="similar-ticket-card">
-                        <div className="similar-ticket-header">
-                          <span className="similar-ticket-category">
-                            {ticket.category}
-                          </span>
-
-                          <span className="similarity-score">
-                            {(ticket.similarity_score * 100).toFixed(0)}% match
-                          </span>
-                        </div>
-
-                        <p className="similar-ticket-description">
-                          {ticket.description}
-                        </p>
-
-                        <div className="similar-ticket-resolution">
-                          <strong>Resolution:</strong>
-
-                          <p>{ticket.resolution}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
           </div>
         )}
     </form>
