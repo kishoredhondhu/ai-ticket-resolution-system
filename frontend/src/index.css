@@ -17,6 +17,26 @@ html {
 }
 
 :root {
+  --background-color: #ffffff;
+
+  --text-color: #000000;
+
+  --primary-color: #007bff;
+
+  --secondary-color: #6c757d;
+
+  --header-background: #f8f9fa;
+
+  --footer-background: #f8f9fa;
+
+  --card-background: #ffffff;
+
+  --card-border-color: #dee2e6;
+
+  --button-background: #007bff;
+
+  --button-text-color: #ffffff;
+
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
     sans-serif;
 
@@ -49,6 +69,34 @@ body {
   width: 100%;
 
   max-width: 100vw;
+
+  background-color: var(--background-color);
+
+  color: var(--text-color);
+
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  --background-color: #121212;
+
+  --text-color: #ffffff;
+
+  --primary-color: #0d6efd;
+
+  --secondary-color: #adb5bd;
+
+  --header-background: #1c1c1c;
+
+  --footer-background: #1c1c1c;
+
+  --card-background: #2c2c2c;
+
+  --card-border-color: #444444;
+
+  --button-background: #0d6efd;
+
+  --button-text-color: #ffffff;
 }
 
 #root {

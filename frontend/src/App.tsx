@@ -9,6 +9,7 @@ import TicketDetailPage from "./pages/TicketDetailPage";
 import "./styles/main.scss";
 
 import "./App.css";
+import ThemeToggle from "./components/Common/ThemeToggle/ThemeToggle";
 
 function PageTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -47,6 +48,7 @@ function App() {
           <Link to="/" className="app-logo">
             TicketGenie
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 

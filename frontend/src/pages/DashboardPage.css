@@ -1,5 +1,9 @@
 .dashboard-page {
   min-height: 100vh;
+
+  background-color: var(--background-color);
+
+  color: var(--text-color);
 }
 
 /* Hero Section - Premium */
@@ -11,7 +15,7 @@
 
   overflow: hidden;
 
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--background-color);
 
   margin-bottom: 2rem;
 
