@@ -142,18 +142,18 @@ SPA runs on `http://localhost:5173` and proxies API calls via `VITE_API_URL`.
 
 ### Backend (`backend/.env`)
 
-| Variable | Required | Description | Example |
-| --- | --- | --- | --- |
-| `PORT` | No | FastAPI port override | `8000` |
-| `TOP_K_SIMILAR` | No | Number of similar tickets returned | `5` |
-| `MIN_SIMILARITY` | No | TF-IDF similarity threshold | `0.25` |
-| `HUGGINGFACE_API_TOKEN` | No | Auth token for higher Hugging Face rate limits | `hf_xxx` |
-| `HF_MODEL` | No | Hugging Face instruct model | `Qwen/Qwen2.5-Coder-32B-Instruct` |
+| Variable                | Required | Description                                    | Example                           |
+| ----------------------- | -------- | ---------------------------------------------- | --------------------------------- |
+| `PORT`                  | No       | FastAPI port override                          | `8000`                            |
+| `TOP_K_SIMILAR`         | No       | Number of similar tickets returned             | `5`                               |
+| `MIN_SIMILARITY`        | No       | TF-IDF similarity threshold                    | `0.25`                            |
+| `HUGGINGFACE_API_TOKEN` | No       | Auth token for higher Hugging Face rate limits | `hf_xxx`                          |
+| `HF_MODEL`              | No       | Hugging Face instruct model                    | `Qwen/Qwen2.5-Coder-32B-Instruct` |
 
 ### Frontend (`frontend/.env`)
 
-| Variable | Description | Example |
-| --- | --- | --- |
+| Variable       | Description                      | Example                 |
+| -------------- | -------------------------------- | ----------------------- |
 | `VITE_API_URL` | Base URL for the FastAPI backend | `http://localhost:8000` |
 
 > Copy `.env.example` if you maintain one, or rely on Railway Secrets during deployment.
@@ -162,15 +162,15 @@ SPA runs on `http://localhost:5173` and proxies API calls via `VITE_API_URL`.
 
 ## 🔌 API reference
 
-| Endpoint | Method | Description |
-| --- | --- | --- |
-| `/health` | GET | Service readiness + knowledge base stats |
-| `/api` | GET | Metadata and available endpoints |
-| `/api/suggest-resolution` | POST | Main RAG endpoint returning suggested resolution, similarity matches, confidence, and metadata |
-| `/api/stats` | GET | Knowledge base counts + top categories |
-| `/api/metrics` | GET | Aggregated performance/quality metrics |
-| `/api/metrics/realtime` | GET | Sliding-window metrics for dashboards |
-| `/api/reload-knowledge-base` | POST | Rebuilds & reloads TF-IDF vectors (admin action) |
+| Endpoint                     | Method | Description                                                                                    |
+| ---------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| `/health`                    | GET    | Service readiness + knowledge base stats                                                       |
+| `/api`                       | GET    | Metadata and available endpoints                                                               |
+| `/api/suggest-resolution`    | POST   | Main RAG endpoint returning suggested resolution, similarity matches, confidence, and metadata |
+| `/api/stats`                 | GET    | Knowledge base counts + top categories                                                         |
+| `/api/metrics`               | GET    | Aggregated performance/quality metrics                                                         |
+| `/api/metrics/realtime`      | GET    | Sliding-window metrics for dashboards                                                          |
+| `/api/reload-knowledge-base` | POST   | Rebuilds & reloads TF-IDF vectors (admin action)                                               |
 
 Example request:
 
@@ -188,12 +188,12 @@ curl -X POST http://localhost:8000/api/suggest-resolution \
 
 ## 🧪 Testing & quality
 
-| Layer | Command | Notes |
-| --- | --- | --- |
-| Backend unit/integration | `python -m pytest` | Covers fallback logic (`test_ai_fallback.py`), endpoint contracts, and evaluation harnesses |
-| Frontend unit/UI | `npm run test` or `npm run test:coverage` | Uses Vitest + Testing Library + happy-dom |
-| Frontend linting | `npm run lint` | ESLint + TypeScript ESLint config |
-| Full pre-deploy | `./test-before-deploy.bat` (Win) / `./check-deployment-ready.sh` | Runs both stacks' tests, ideal for CI |
+| Layer                    | Command                                                          | Notes                                                                                       |
+| ------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Backend unit/integration | `python -m pytest`                                               | Covers fallback logic (`test_ai_fallback.py`), endpoint contracts, and evaluation harnesses |
+| Frontend unit/UI         | `npm run test` or `npm run test:coverage`                        | Uses Vitest + Testing Library + happy-dom                                                   |
+| Frontend linting         | `npm run lint`                                                   | ESLint + TypeScript ESLint config                                                           |
+| Full pre-deploy          | `./test-before-deploy.bat` (Win) / `./check-deployment-ready.sh` | Runs both stacks' tests, ideal for CI                                                       |
 
 Add these commands to GitHub Actions or Railway's CI hooks to keep the main branch green.
 
@@ -229,12 +229,12 @@ Add these commands to GitHub Actions or Railway's CI hooks to keep the main bran
 
 ## 🛠 Troubleshooting
 
-| Issue | Fix |
-| --- | --- |
+| Issue                                           | Fix                                                                                                                                      |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | Backend fails with `RAG engine not initialized` | Ensure `data/knowledge_base.pkl` exists (run `scripts/build_knowledge_base_tfidf.py`) and that the path matches `RAGEngine` constructor. |
-| Frontend cannot reach API | Confirm backend is running on port 8000, update `VITE_API_URL`, and check CORS in `app.py`. |
-| Hugging Face rate limits | Provide `HUGGINGFACE_API_TOKEN` or reduce traffic; fallback templates still work without AI. |
-| Railway build timeouts | Cache dependencies with Nixpacks (`nixpacks.toml`) and prune `node_modules` before commits. |
+| Frontend cannot reach API                       | Confirm backend is running on port 8000, update `VITE_API_URL`, and check CORS in `app.py`.                                              |
+| Hugging Face rate limits                        | Provide `HUGGINGFACE_API_TOKEN` or reduce traffic; fallback templates still work without AI.                                             |
+| Railway build timeouts                          | Cache dependencies with Nixpacks (`nixpacks.toml`) and prune `node_modules` before commits.                                              |
 
 See `backend/AI_FALLBACK_FEATURE.md` for deeper insight into graceful degradation strategies.
 
