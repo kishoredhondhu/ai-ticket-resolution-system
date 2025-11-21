@@ -2,7 +2,7 @@
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](#) [![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](#) [![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?logo=railway)](#) [![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
-An end-to-end Retrieval-Augmented Generation (RAG) platform that helps IT teams resolve tickets faster with a TF-IDF knowledge base, Hugging Face/Azure AI assist, and a TypeScript/React dashboard ready for Railway deployment.
+An end-to-end Retrieval-Augmented Generation (RAG) platform that helps IT teams resolve tickets faster with a TF-IDF knowledge base, Hugging Face AI assist, and a TypeScript/React dashboard ready for Railway deployment.
 
 ---
 
@@ -50,7 +50,7 @@ graph TD
     API --> RAGEngine[rag_engine_tfidf.py]
     RAGEngine --> KB[data/knowledge_base.pkl]
     API --> Metrics[metrics_tracker]
-    RAGEngine --> HF[Hugging Face / Azure OpenAI]
+   RAGEngine --> HF[Hugging Face Inference]
     API --> Railway[(Railway / Nixpacks)]
 ```
 
@@ -149,10 +149,6 @@ SPA runs on `http://localhost:5173` and proxies API calls via `VITE_API_URL`.
 | `MIN_SIMILARITY` | No | TF-IDF similarity threshold | `0.25` |
 | `HUGGINGFACE_API_TOKEN` | No | Auth token for higher Hugging Face rate limits | `hf_xxx` |
 | `HF_MODEL` | No | Hugging Face instruct model | `Qwen/Qwen2.5-Coder-32B-Instruct` |
-| `AZURE_OPENAI_ENDPOINT` | Optional | Azure OpenAI inference endpoint (if using Azure) | `https://...openai.azure.com/` |
-| `AZURE_OPENAI_KEY` | Optional | API key | `xxxx` |
-| `AZURE_OPENAI_DEPLOYMENT` | Optional | Deployment name | `gpt-4o-mini` |
-| `AZURE_OPENAI_API_VERSION` | Optional | API version string | `2025-01-01-preview` |
 
 ### Frontend (`frontend/.env`)
 
@@ -194,7 +190,7 @@ curl -X POST http://localhost:8000/api/suggest-resolution \
 
 | Layer | Command | Notes |
 | --- | --- | --- |
-| Backend unit/integration | `python -m pytest` | Covers fallback logic (`test_ai_fallback.py`), Azure reachability, endpoints, and evaluation harnesses |
+| Backend unit/integration | `python -m pytest` | Covers fallback logic (`test_ai_fallback.py`), endpoint contracts, and evaluation harnesses |
 | Frontend unit/UI | `npm run test` or `npm run test:coverage` | Uses Vitest + Testing Library + happy-dom |
 | Frontend linting | `npm run lint` | ESLint + TypeScript ESLint config |
 | Full pre-deploy | `./test-before-deploy.bat` (Win) / `./check-deployment-ready.sh` | Runs both stacks' tests, ideal for CI |
@@ -210,7 +206,7 @@ Add these commands to GitHub Actions or Railway's CI hooks to keep the main bran
    - Backend → FastAPI + uvicorn (uses Procfile / `start.sh`).
    - Frontend → Static build via Vite or serve via the FastAPI static mount (`frontend/dist`).
 3. **Configure Railway variables**
-   - Add backend secrets (Azure/HF tokens, thresholds).
+   - Add backend secrets (Hugging Face tokens, thresholds).
    - Add `VITE_API_URL` pointing to the backend service URL.
 4. **Trigger build**
    - Railway uses Nixpacks to install Python + Node sub-builds automatically.
@@ -238,7 +234,6 @@ Add these commands to GitHub Actions or Railway's CI hooks to keep the main bran
 | Backend fails with `RAG engine not initialized` | Ensure `data/knowledge_base.pkl` exists (run `scripts/build_knowledge_base_tfidf.py`) and that the path matches `RAGEngine` constructor. |
 | Frontend cannot reach API | Confirm backend is running on port 8000, update `VITE_API_URL`, and check CORS in `app.py`. |
 | Hugging Face rate limits | Provide `HUGGINGFACE_API_TOKEN` or reduce traffic; fallback templates still work without AI. |
-| Azure OpenAI 403 errors | Usually firewall/network; connect to VPN or whitelist your IP. The fallback pipeline keeps user experience intact. |
 | Railway build timeouts | Cache dependencies with Nixpacks (`nixpacks.toml`) and prune `node_modules` before commits. |
 
 See `backend/AI_FALLBACK_FEATURE.md` for deeper insight into graceful degradation strategies.
@@ -259,7 +254,7 @@ See `backend/AI_FALLBACK_FEATURE.md` for deeper insight into graceful degradatio
 
 - [ ] User authentication & RBAC for ticket access.
 - [ ] Ticket history timeline + audit trail UI (`components/Audit`).
-- [ ] Multi-model strategy (Azure OpenAI + local small models).
+- [ ] Multi-model strategy (multiple open-source/local models).
 - [ ] Real-time notifications & WebSocket streaming.
 - [ ] Feedback loop + fine-tuning on labeled outcomes.
 
@@ -274,7 +269,7 @@ Released under the MIT License. See `LICENSE` (add one if not yet committed) for
 ### 🙏 Acknowledgements
 
 - FastAPI + Pydantic for the backend foundation.
-- Hugging Face + Azure OpenAI for AI inference options.
+- Hugging Face Inference API for AI capabilities.
 - React, Vite, Vitest, and Testing Library for the frontend stack.
 - Railway + Nixpacks for turn-key deployments.
 

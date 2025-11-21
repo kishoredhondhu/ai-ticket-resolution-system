@@ -2,7 +2,7 @@
 
 Setup Configuration
 
-Creates .env file with Azure credentials.
+Creates a minimal .env file for the RAG service.
 
 """
 
@@ -18,11 +18,9 @@ def create_env_file():
 
     """Create .env file with configuration."""
 
-    env_content = """# Azure OpenAI Configuration
-AZURE_OPENAI_ENDPOINT=https://ag-new-endpoint.openai.azure.com
-AZURE_OPENAI_KEY=your-api-key-here
-AZURE_OPENAI_API_VERSION=2025-01-01-preview
-AZURE_OPENAI_DEPLOYMENT=gpt-4.1
+    env_content = """# AI Provider Configuration
+HUGGINGFACE_API_TOKEN=
+HF_MODEL=Qwen/Qwen2.5-Coder-32B-Instruct
 
 # RAG Configuration
 TOP_K_SIMILAR=5
@@ -43,10 +41,8 @@ PORT=8000
     print("✓ .env file created successfully")
 
     print("\nConfiguration written to .env (edit values as needed):")
-    print("  AZURE_OPENAI_ENDPOINT=")
-    print("  AZURE_OPENAI_KEY=")
-    print("  AZURE_OPENAI_API_VERSION=2025-01-01-preview")
-    print("  AZURE_OPENAI_DEPLOYMENT=gpt-4.1")
+    print("  HUGGINGFACE_API_TOKEN=")
+    print("  HF_MODEL=Qwen/Qwen2.5-Coder-32B-Instruct")
     print("  TOP_K_SIMILAR=5")
     print("  MIN_SIMILARITY=0.6")
     print("  PORT=8000")
