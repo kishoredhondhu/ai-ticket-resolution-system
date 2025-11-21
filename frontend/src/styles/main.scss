@@ -1769,16 +1769,3 @@ textarea {
     padding: var(--spacing-lg);
   }
 }
-
-body.dark {
-  --background-color: #121212;
-  --text-color: #f8fafc;
-  --card-background: #1e1e1e;
-  --card-border-color: #3a3a3a;
-  --button-background: #4f46e5;
-  --button-text-color: #f8fafc;
-  --header-background: #1e1e1e;
-  --footer-background: #121212;
-
-  // ... potentially override other variables for dark mode
-}
