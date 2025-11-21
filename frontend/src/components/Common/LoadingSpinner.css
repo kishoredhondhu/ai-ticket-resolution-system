@@ -1,103 +1,70 @@
 .loading-spinner {
   display: inline-flex;
-
   align-items: center;
-
   justify-content: center;
-
   padding: 0.25rem;
 }
-
 .loading-spinner svg {
   animation: spinner-rotate 1s linear infinite;
-
   filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.5));
 }
-
 .loading-spinner svg circle:first-of-type {
   stroke: var(--primary-color);
-
   stroke-dasharray: 50;
-
   stroke-dashoffset: 0;
-
   animation: spinner-dash 1.4s ease-in-out infinite;
-
   stroke-linecap: round;
 }
-
 .loading-spinner svg circle:last-of-type {
   stroke: rgba(99, 102, 241, 0.2);
 }
-
 @keyframes spinner-rotate {
   100% {
     transform: rotate(360deg);
   }
 }
-
 @keyframes spinner-dash {
   0% {
     stroke-dasharray: 1, 150;
-
     stroke-dashoffset: 0;
   }
-
   50% {
     stroke-dasharray: 90, 150;
-
     stroke-dashoffset: -35;
   }
-
   100% {
     stroke-dasharray: 90, 150;
-
     stroke-dashoffset: -124;
   }
 }
-
 /* Alternative pulsing loader */
-
 .loading-dots {
   display: inline-flex;
-
   align-items: center;
-
   gap: 0.5rem;
 }
-
 .loading-dots span {
   width: 8px;
-
   height: 8px;
-
   border-radius: 50%;
-
   background: var(--primary-color);
-
   animation: pulse 1.4s ease-in-out infinite;
 }
-
 .loading-dots span:nth-child(2) {
   animation-delay: 0.2s;
 }
-
 .loading-dots span:nth-child(3) {
   animation-delay: 0.4s;
 }
-
 @keyframes pulse {
   0%,
   80%,
   100% {
     transform: scale(0);
-
     opacity: 0.5;
   }
-
   40% {
     transform: scale(1);
-
     opacity: 1;
   }
 }

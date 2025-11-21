@@ -1,21 +1,14 @@
 import React from "react";
-
 interface Props {
   label: string;
-
   value: string;
-
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-
   placeholder?: string;
-
   type?: string;
-
   required?: boolean;
 }
-
 const FormField: React.FC<Props> = ({
   label,
   value,
@@ -27,7 +20,6 @@ const FormField: React.FC<Props> = ({
   <div className="form-field">
     <label>
       {label}
-
       {type === "textarea" ? (
         <textarea
           value={value}
@@ -47,5 +39,4 @@ const FormField: React.FC<Props> = ({
     </label>
   </div>
 );
-
 export default FormField;

@@ -1,7 +1,5 @@
 import React from "react";
-
 import "./LoadingSpinner.css";
-
 const LoadingSpinner: React.FC = () => (
   <div className="loading-spinner" aria-label="Loading...">
     <svg width="20" height="20" viewBox="0 0 20 20">
@@ -13,7 +11,6 @@ const LoadingSpinner: React.FC = () => (
         strokeWidth="3"
         fill="none"
       />
-
       <circle
         cx="10"
         cy="10"
@@ -27,5 +24,4 @@ const LoadingSpinner: React.FC = () => (
     </svg>
   </div>
 );
-
 export default LoadingSpinner;

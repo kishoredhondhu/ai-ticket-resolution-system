@@ -6,9 +6,6 @@ Uses TF-IDF similarity instead of embeddings (no embedding API needed!)
 
 """
 
-
- 
-
 import argparse
 import os
 import sys
@@ -21,6 +18,7 @@ from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 def _detect_columns(df):
     """Detect and map required columns from a variety of common headers.
 
@@ -32,15 +30,30 @@ def _detect_columns(df):
 
     candidates = {
         "category": [
-            "category", "categories", "type", "issue_type", "ticket_category",
+            "category",
+            "categories",
+            "type",
+            "issue_type",
+            "ticket_category",
         ],
         "description": [
-            "description", "ticket_description", "issue", "issue_description",
-            "problem", "summary", "details", "text",
+            "description",
+            "ticket_description",
+            "issue",
+            "issue_description",
+            "problem",
+            "summary",
+            "details",
+            "text",
         ],
         "resolution": [
-            "resolution", "solution", "fix", "steps", "resolution_notes",
-            "answer", "workaround",
+            "resolution",
+            "solution",
+            "fix",
+            "steps",
+            "resolution_notes",
+            "answer",
+            "workaround",
         ],
         # Optional
         "ticket_id": ["ticket_id", "id", "ticketid", "case_id", "incident_id"],
@@ -73,19 +86,14 @@ def _detect_columns(df):
     return mapping
 
 
- # Load environment
+# Load environment
 load_dotenv()
 
 
- 
-
 def load_tickets_from_excel(excel_path):
-
     """Load tickets from Excel file."""
 
     print(f"Loading tickets from: {excel_path}")
-
-   
 
     if not os.path.exists(excel_path):
 
@@ -93,14 +101,10 @@ def load_tickets_from_excel(excel_path):
 
         return None
 
-   
-
     df = pd.read_excel(excel_path)
 
-   
-
     # Normalize column names
-    df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
     # Detect and rename columns to canonical names
     try:
         mapping = _detect_columns(df)
@@ -109,133 +113,78 @@ def load_tickets_from_excel(excel_path):
         print(f"❌ Column detection error: {e}")
         return None
 
-   
-
     print(f"✓ Loaded {len(df)} tickets")
 
     print(f"  Columns: {list(df.columns)}")
 
-   
-
     return df
 
 
- 
-
 def build_knowledge_base_tfidf(df):
-
     """Build knowledge base using TF-IDF vectors."""
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
 
     print("BUILDING KNOWLEDGE BASE (TF-IDF)")
 
-    print("="*60)
-
-   
+    print("=" * 60)
 
     tickets = []
 
     texts = []
-
-   
 
     # Prepare ticket data
 
     for _, row in tqdm(df.iterrows(), total=len(df), desc="Processing tickets"):
 
         ticket = {
-
-            'ticket_id': row.get('ticket_id', f'T-{len(tickets)+1}'),
-
-            'category': str(row['category']),
-
-            'description': str(row['description']),
-
-            'resolution': str(row['resolution']),
-
-            'priority': str(row.get('priority', 'Medium')),
-
-            'status': str(row.get('status', 'Resolved'))
-
+            "ticket_id": row.get("ticket_id", f"T-{len(tickets)+1}"),
+            "category": str(row["category"]),
+            "description": str(row["description"]),
+            "resolution": str(row["resolution"]),
+            "priority": str(row.get("priority", "Medium")),
+            "status": str(row.get("status", "Resolved")),
         }
-
-       
 
         # Create combined text for TF-IDF
 
         combined_text = f"{ticket['category']} {ticket['description']}"
 
-       
-
         tickets.append(ticket)
 
         texts.append(combined_text)
 
-   
-
     print(f"\n✓ Processed {len(tickets)} tickets")
-
-   
 
     # Create TF-IDF vectorizer
 
     print("\nBuilding TF-IDF index...")
 
     vectorizer = TfidfVectorizer(
-
-        max_features=5000,
-
-        ngram_range=(1, 2),
-
-        stop_words='english'
-
+        max_features=5000, ngram_range=(1, 2), stop_words="english"
     )
 
-   
-
     tfidf_matrix = vectorizer.fit_transform(texts)
-
-   
 
     print(f"✓ TF-IDF matrix shape: {tfidf_matrix.shape}")
 
     print(f"✓ Vocabulary size: {len(vectorizer.vocabulary_)}")
 
-   
-
     return tickets, vectorizer, tfidf_matrix
 
 
- 
-
 def save_knowledge_base(tickets, vectorizer, tfidf_matrix, output_path):
-
     """Save knowledge base to disk."""
 
     # Create data directory
 
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
-   
+    data = {"tickets": tickets, "vectorizer": vectorizer, "tfidf_matrix": tfidf_matrix}
 
-    data = {
-
-        'tickets': tickets,
-
-        'vectorizer': vectorizer,
-
-        'tfidf_matrix': tfidf_matrix
-
-    }
-
-   
-
-    with open(output_path, 'wb') as f:
+    with open(output_path, "wb") as f:
 
         pickle.dump(data, f)
-
-   
 
     file_size = os.path.getsize(output_path) / (1024 * 1024)  # MB
 
@@ -246,41 +195,30 @@ def save_knowledge_base(tickets, vectorizer, tfidf_matrix, output_path):
     print(f"  Total tickets: {len(tickets)}")
 
 
- 
-
 def validate_knowledge_base(output_path):
-
     """Validate the knowledge base."""
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
 
     print("VALIDATING KNOWLEDGE BASE")
 
-    print("="*60)
+    print("=" * 60)
 
-   
-
-    with open(output_path, 'rb') as f:
+    with open(output_path, "rb") as f:
 
         data = pickle.load(f)
 
-   
+    tickets = data["tickets"]
 
-    tickets = data['tickets']
+    vectorizer = data["vectorizer"]
 
-    vectorizer = data['vectorizer']
-
-    tfidf_matrix = data['tfidf_matrix']
-
-   
+    tfidf_matrix = data["tfidf_matrix"]
 
     print(f"✓ Tickets: {len(tickets)}")
 
     print(f"✓ TF-IDF matrix shape: {tfidf_matrix.shape}")
 
     print(f"✓ Vocabulary size: {len(vectorizer.vocabulary_)}")
-
-   
 
     # Sample ticket
 
@@ -298,19 +236,15 @@ def validate_knowledge_base(output_path):
 
         print(f"  Resolution: {sample['resolution'][:100]}...")
 
-   
-
     # Category distribution
 
     categories = {}
 
     for ticket in tickets:
 
-        cat = ticket['category']
+        cat = ticket["category"]
 
         categories[cat] = categories.get(cat, 0) + 1
-
-   
 
     print(f"\nTop 5 categories:")
 
@@ -320,31 +254,23 @@ def validate_knowledge_base(output_path):
 
         print(f"  {cat}: {count}")
 
-   
-
     # Test similarity search
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
 
     print("TESTING SIMILARITY SEARCH")
 
-    print("="*60)
-
-   
+    print("=" * 60)
 
     test_query = "Cannot connect to Wi-Fi network"
 
     print(f"\nTest query: '{test_query}'")
-
-   
 
     query_vec = vectorizer.transform([test_query])
 
     similarities = cosine_similarity(query_vec, tfidf_matrix)[0]
 
     top_5_indices = similarities.argsort()[-5:][::-1]
-
-   
 
     print("\nTop 5 similar tickets:")
 
@@ -361,25 +287,23 @@ def validate_knowledge_base(output_path):
         print(f"   Description: {ticket['description'][:80]}...")
 
 
- 
-
 def main():
 
-    print("="*60)
+    print("=" * 60)
 
     print("BUILD KNOWLEDGE BASE FOR RAG SERVICE (TF-IDF)")
 
-    print("="*60)
+    print("=" * 60)
 
     print()
-
-   
 
     # Resolve backend root: this file is backend/scripts/...
     scripts_dir = Path(__file__).resolve().parent
     backend_root = scripts_dir.parent
 
-    parser = argparse.ArgumentParser(description="Build TF-IDF knowledge base from Excel file")
+    parser = argparse.ArgumentParser(
+        description="Build TF-IDF knowledge base from Excel file"
+    )
     parser.add_argument(
         "--excel",
         dest="excel",
@@ -399,18 +323,16 @@ def main():
     excel_path = args.excel
     output_path = args.output
 
-   
-
     # Check if tickets file exists
 
     if not os.path.exists(excel_path):
         print(f"❌ Tickets file not found: {excel_path}")
         print(f"\nCurrent directory: {os.getcwd()}")
         print(f"Looking for: {os.path.abspath(excel_path)}")
-        print("Hint: Place your Excel at backend/data/Sample-Data.xlsx or pass --excel <path>.")
+        print(
+            "Hint: Place your Excel at backend/data/Sample-Data.xlsx or pass --excel <path>."
+        )
         return
-
-   
 
     # Load tickets
 
@@ -420,31 +342,23 @@ def main():
 
         return
 
-   
-
     # Build knowledge base using TF-IDF
 
     tickets, vectorizer, tfidf_matrix = build_knowledge_base_tfidf(df)
-
-   
 
     # Save knowledge base
 
     save_knowledge_base(tickets, vectorizer, tfidf_matrix, output_path)
 
-   
-
     # Validate
 
     validate_knowledge_base(output_path)
 
-   
-
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
 
     print("✅ KNOWLEDGE BASE BUILT SUCCESSFULLY!")
 
-    print("="*60)
+    print("=" * 60)
 
     print("\n💡 Using TF-IDF similarity (no embeddings needed)")
 
@@ -461,11 +375,6 @@ def main():
     print()
 
 
- 
-
 if __name__ == "__main__":
 
     main()
-
-
- 

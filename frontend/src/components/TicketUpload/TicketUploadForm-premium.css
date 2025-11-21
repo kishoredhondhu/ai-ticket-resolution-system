@@ -1,688 +1,422 @@
 .ticket-upload-form {
   background: white;
-
   border-radius: 1.5rem;
-
   padding: 2.5rem;
-
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 /* Form Groups */
-
 .form-group {
   margin-bottom: 2rem;
 }
-
 .form-label {
   display: flex;
-
   align-items: center;
-
   gap: 0.5rem;
-
   margin-bottom: 0.75rem;
-
   font-weight: 600;
-
   color: var(--text-primary);
-
   font-size: 1rem;
 }
-
 .label-text {
   font-size: 1rem;
-
   color: var(--text-primary);
 }
-
 .label-required {
   color: var(--error-color);
-
   font-size: 1.125rem;
-
   margin-left: 0.25rem;
 }
-
 /* Select Dropdown - Premium */
-
 .form-select {
   width: 100%;
-
   padding: 1rem 1.25rem;
-
   border: 2px solid var(--border-color);
-
   border-radius: var(--radius-lg);
-
   font-family: "Inter", sans-serif;
-
   font-size: 1rem;
-
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
   background: white;
-
   cursor: pointer;
-
   appearance: none;
-
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236366f1' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
-
   background-repeat: no-repeat;
-
   background-position: right 1rem center;
-
   padding-right: 3rem;
-
   color: var(--text-primary);
-
   box-shadow: var(--shadow-sm);
 }
-
 .form-select:hover {
   border-color: var(--primary-light);
-
   box-shadow: var(--shadow-md);
 }
-
 .form-select:focus {
   outline: none;
-
   border-color: var(--primary-color);
-
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), var(--shadow-md);
-
   transform: translateY(-1px);
 }
-
 /* Textarea - Premium */
-
 .form-textarea {
   width: 100%;
-
   padding: 1rem 1.25rem;
-
   border: 2px solid var(--border-color);
-
   border-radius: var(--radius-lg);
-
   font-family: "Inter", sans-serif;
-
   font-size: 1rem;
-
   resize: vertical;
-
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
   background: white;
-
   color: var(--text-primary);
-
   line-height: 1.6;
-
   box-shadow: var(--shadow-sm);
 }
-
 .form-textarea:hover {
   border-color: var(--primary-light);
-
   box-shadow: var(--shadow-md);
 }
-
 .form-textarea:focus {
   outline: none;
-
   border-color: var(--primary-color);
-
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), var(--shadow-md);
-
   transform: translateY(-1px);
 }
-
 .form-textarea::placeholder {
   color: var(--text-muted);
 }
-
 .char-counter {
   margin-top: 0.5rem;
-
   font-size: 0.875rem;
-
   color: var(--text-muted);
-
   text-align: right;
 }
-
 /* Drag & Drop Zone - Premium */
-
 .drop-zone {
   border: 3px dashed var(--border-color);
-
   border-radius: var(--radius-xl);
-
   padding: 3rem 2rem;
-
   text-align: center;
-
   cursor: pointer;
-
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
   background: linear-gradient(
     135deg,
     rgba(99, 102, 241, 0.02) 0%,
     rgba(118, 75, 162, 0.02) 100%
   );
-
   position: relative;
-
   overflow: hidden;
 }
-
 .drop-zone::before {
   content: "";
-
   position: absolute;
-
   top: -50%;
-
   left: -50%;
-
   width: 200%;
-
   height: 200%;
-
   background: radial-gradient(
     circle,
     rgba(99, 102, 241, 0.05) 0%,
     transparent 70%
   );
-
   opacity: 0;
-
   transition: opacity 0.4s ease;
 }
-
 .drop-zone:hover {
   border-color: var(--primary-color);
-
   background: linear-gradient(
     135deg,
     rgba(99, 102, 241, 0.05) 0%,
     rgba(118, 75, 162, 0.05) 100%
   );
-
   transform: translateY(-2px);
-
   box-shadow: var(--shadow-lg);
 }
-
 .drop-zone:hover::before {
   opacity: 1;
 }
-
 .drop-zone.dragging {
   border-color: var(--primary-color);
-
   background: linear-gradient(
     135deg,
     rgba(99, 102, 241, 0.1) 0%,
     rgba(118, 75, 162, 0.1) 100%
   );
-
   border-style: solid;
-
   box-shadow: var(--shadow-xl), var(--glow-primary);
-
   transform: scale(1.02);
 }
-
 .drop-zone.has-file {
   border-color: var(--success-color);
-
   background: linear-gradient(
     135deg,
     rgba(16, 185, 129, 0.05) 0%,
     rgba(16, 185, 129, 0.02) 100%
   );
-
   border-style: solid;
 }
-
 .drop-zone-content {
   position: relative;
-
   z-index: 1;
 }
-
 .drop-icon {
   font-size: 4rem;
-
   margin-bottom: 1rem;
-
   animation: bounce 2s ease-in-out infinite;
 }
-
 .drop-text {
   display: flex;
-
   flex-direction: column;
-
   gap: 0.5rem;
-
   margin-bottom: 1rem;
 }
-
 .drop-primary {
   font-size: 1.125rem;
-
   font-weight: 600;
-
   color: var(--text-primary);
 }
-
 .drop-secondary {
   font-size: 0.875rem;
-
   color: var(--text-secondary);
 }
-
 .drop-formats {
   font-size: 0.8125rem;
-
   color: var(--text-muted);
-
   padding: 0.5rem 1rem;
-
   background: rgba(99, 102, 241, 0.05);
-
   border-radius: var(--radius-full);
-
   display: inline-block;
 }
-
 /* File Preview - Premium */
-
 .file-preview {
   display: flex;
-
   align-items: center;
-
   gap: 1.5rem;
-
   padding: 1.5rem;
-
   background: white;
-
   border-radius: var(--radius-lg);
-
   box-shadow: var(--shadow-md);
-
   position: relative;
-
   z-index: 1;
 }
-
 .file-icon-large {
   font-size: 3.5rem;
-
   flex-shrink: 0;
-
   animation: scaleIn 0.3s ease;
 }
-
 .file-details {
   flex: 1;
-
   text-align: left;
-
   overflow: hidden;
 }
-
 .file-name {
   font-size: 1rem;
-
   font-weight: 600;
-
   color: var(--text-primary);
-
   margin-bottom: 0.5rem;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   white-space: nowrap;
 }
-
 .file-meta {
   display: flex;
-
   align-items: center;
-
   gap: 0.5rem;
-
   font-size: 0.875rem;
-
   color: var(--text-secondary);
 }
-
 .file-type {
   font-weight: 500;
-
   color: var(--success-color);
 }
-
 .file-separator {
   color: var(--text-muted);
 }
-
 .file-size {
   color: var(--text-muted);
 }
-
 .file-remove {
   flex-shrink: 0;
-
   width: 2rem;
-
   height: 2rem;
-
   border: none;
-
   background: rgba(239, 68, 68, 0.1);
-
   color: var(--error-color);
-
   border-radius: 50%;
-
   cursor: pointer;
-
   font-size: 1.125rem;
-
   font-weight: 700;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   transition: all 0.3s ease;
 }
-
 .file-remove:hover {
   background: var(--error-color);
-
   color: white;
-
   transform: scale(1.1);
 }
-
 /* Submit Button - Premium */
-
 .btn-submit {
   width: 100%;
-
   padding: 1.125rem 2rem;
-
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
   color: white;
-
   border: none;
-
   border-radius: var(--radius-xl);
-
   font-size: 1.125rem;
-
   font-weight: 700;
-
   cursor: pointer;
-
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
   box-shadow: var(--shadow-md);
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 0.75rem;
-
   position: relative;
-
   overflow: hidden;
-
   margin-top: 1.5rem;
 }
-
 .btn-submit::before {
   content: "";
-
   position: absolute;
-
   top: 50%;
-
   left: 50%;
-
   width: 0;
-
   height: 0;
-
   border-radius: 50%;
-
   background: rgba(255, 255, 255, 0.3);
-
   transform: translate(-50%, -50%);
-
   transition: width 0.6s, height 0.6s;
 }
-
 .btn-submit:hover::before {
   width: 400px;
-
   height: 400px;
 }
-
 .btn-submit:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.02);
-
   box-shadow: var(--shadow-xl), var(--glow-primary);
 }
-
 .btn-submit:active:not(:disabled) {
   transform: translateY(0) scale(0.98);
 }
-
 .btn-submit:disabled {
   opacity: 0.6;
-
   cursor: not-allowed;
-
   transform: none;
 }
-
 .btn-icon {
   font-size: 1.25rem;
-
   position: relative;
-
   z-index: 1;
 }
-
 .btn-submit span {
   position: relative;
-
   z-index: 1;
 }
-
 .btn-loading {
   display: flex;
-
   align-items: center;
-
   gap: 0.75rem;
-
   position: relative;
-
   z-index: 1;
 }
-
 /* Upload Progress - Premium */
-
 .upload-progress {
   margin-top: 1.5rem;
-
   animation: slideIn 0.3s ease;
 }
-
 .progress-bar {
   height: 8px;
-
   background: var(--border-light);
-
   border-radius: var(--radius-full);
-
   overflow: hidden;
-
   box-shadow: var(--shadow-inner);
 }
-
 .progress-fill {
   height: 100%;
-
   background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-
   background-size: 200% 100%;
-
   border-radius: var(--radius-full);
-
   transition: width 0.3s ease;
-
   animation: shimmer 2s linear infinite;
-
   box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
 }
-
 .progress-text {
   margin-top: 0.5rem;
-
   text-align: center;
-
   font-size: 0.875rem;
-
   font-weight: 600;
-
   color: var(--primary-color);
 }
-
 /* Error Message - Premium */
-
 .error-message {
   margin-top: 1.5rem;
-
   padding: 1rem 1.25rem;
-
   background: linear-gradient(
     135deg,
     rgba(239, 68, 68, 0.1) 0%,
     rgba(239, 68, 68, 0.05) 100%
   );
-
   border-left: 4px solid var(--error-color);
-
   border-radius: var(--radius-lg);
-
   color: var(--error-color);
-
   font-weight: 600;
-
   display: flex;
-
   align-items: center;
-
   gap: 0.75rem;
-
   animation: slideIn 0.3s ease;
-
   box-shadow: var(--shadow-sm);
 }
-
 .error-icon {
   font-size: 1.5rem;
-
   flex-shrink: 0;
 }
-
 /* Animations */
-
 @keyframes scaleIn {
   from {
     transform: scale(0);
-
     opacity: 0;
   }
-
   to {
     transform: scale(1);
-
     opacity: 1;
   }
 }
-
 /* Responsive Design */
-
 @media (max-width: 768px) {
   .ticket-upload-form {
     padding: 1.5rem;
   }
-
   .drop-zone {
     padding: 2rem 1rem;
   }
-
   .drop-icon {
     font-size: 3rem;
   }
-
   .drop-primary {
     font-size: 1rem;
   }
-
   .file-preview {
     flex-direction: column;
-
     text-align: center;
   }
-
   .file-details {
     text-align: center;
   }
-
   .btn-submit {
     font-size: 1rem;
-
     padding: 1rem 1.5rem;
   }
 }
-
 @media (max-width: 480px) {
   .form-group {
     margin-bottom: 1.5rem;
   }
-
   .drop-zone {
     padding: 1.5rem 1rem;
   }
-
   .drop-icon {
     font-size: 2.5rem;
   }
-
   .file-icon-large {
     font-size: 2.5rem;
   }

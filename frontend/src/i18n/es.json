@@ -1,37 +1,20 @@
 {
   "submit_new_ticket": "Enviar un nuevo ticket",
-
   "description": "Descripción",
-
   "attach_file": "Adjuntar archivo (PDF/Imagen/Texto)",
-
   "upload_ticket": "Cargar ticket",
-
   "similar_tickets": "Tickets históricos similares",
-
   "category": "Categoría",
-
   "priority": "Prioridad",
-
   "status": "Estado",
-
   "resolution": "Resolución",
-
   "suggested_resolution": "Resolución sugerida",
-
   "why_this_resolution": "¿Por qué esta resolución?",
-
   "override_suggestion": "Anular sugerencia",
-
   "audit_log": "Registro de auditoría",
-
   "ticket_details": "Detalles del ticket",
-
   "your_feedback": "Tu opinión",
-
   "submit_feedback": "Enviar opinión",
-
   "dashboard": "Panel TicketGenie",
-
   "history": "Historial de resolución de tickets"
 }

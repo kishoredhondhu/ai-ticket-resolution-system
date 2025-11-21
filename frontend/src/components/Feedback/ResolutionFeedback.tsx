@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-
 interface Props {
   onSubmit: (feedback: string) => void;
 }
-
 const ResolutionFeedback: React.FC<Props> = ({ onSubmit }) => {
   const [feedback, setFeedback] = useState("");
-
   return (
     <form
       className="feedback-form"
@@ -24,10 +21,8 @@ const ResolutionFeedback: React.FC<Props> = ({ onSubmit }) => {
           required
         />
       </label>
-
       <button type="submit">Submit Feedback</button>
     </form>
   );
 };
-
 export default ResolutionFeedback;

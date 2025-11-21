@@ -1,14 +1,10 @@
 import React from "react";
-
 import { useSimilarTickets } from "../hooks/useSimilarTickets";
-
 const HistoryPage: React.FC = () => {
   const { tickets } = useSimilarTickets({ statusFilter: "Closed" });
-
   return (
     <div className="history-page">
       <h1>Ticket Resolution History</h1>
-
       <ul>
         {tickets.map((ticket) => (
           <li key={ticket.ticketId}>
@@ -23,5 +19,4 @@ const HistoryPage: React.FC = () => {
     </div>
   );
 };
-
 export default HistoryPage;

@@ -1,58 +1,21 @@
 # RAG Service Dependencies
-
-
- 
-
 # Web Framework
-
 fastapi==0.115.0
-
 uvicorn[standard]==0.32.0
-
-
- 
-
 # AI Integration
 python-dotenv==1.0.0
 huggingface_hub>=0.20.0  # Free AI for resolution refinement
-
-
- 
-
 # Vector Search
-
 faiss-cpu==1.9.0
-
 numpy==1.26.4
-
-
- 
-
 # Data Processing
-
 pandas==2.2.0
-
 openpyxl==3.1.2
-
 scikit-learn==1.5.2
-
 tqdm==4.66.4
-
-
- 
-
 # HTTP Client
-
 httpx==0.28.1
-
 requests==2.31.0
-
-
- 
-
 # Utilities
-
 pydantic==2.12.4
-
-
  
