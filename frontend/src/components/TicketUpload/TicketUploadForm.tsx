@@ -19,7 +19,7 @@ const TicketUploadForm: React.FC = () => {
 
   const [category, setCategory] = useState("");
 
-  const [priority, setPriority] = useState("Medium");
+  const [priority, setPriority] = useState("");
 
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -127,7 +127,7 @@ const TicketUploadForm: React.FC = () => {
 
       setCategory("");
 
-      setPriority("Medium");
+      setPriority("");
 
       setUploadProgress(0);
     }, 1000);
@@ -171,6 +171,8 @@ const TicketUploadForm: React.FC = () => {
           onChange={(e) => setPriority(e.target.value)}
           required
         >
+          <option value="">Select a priority...</option>
+
           {priorities.map((p) => (
             <option key={p} value={p}>
               {p}
@@ -201,7 +203,7 @@ const TicketUploadForm: React.FC = () => {
       <button
         type="submit"
         className="btn-submit"
-        disabled={loading || !description || !category}
+        disabled={loading || !description || !category || !priority}
       >
         {loading ? (
           <span className="btn-loading">
