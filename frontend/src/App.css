@@ -136,40 +136,6 @@
   padding: 0;
 }
 
-/* Theme Toggle */
-.theme-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1rem;
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-full);
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-  position: relative;
-  overflow: hidden;
-}
-.theme-toggle-btn:hover {
-  background: var(--primary-gradient);
-  color: #fff;
-  border-color: var(--primary-color);
-  box-shadow: var(--shadow-md), var(--glow-primary);
-}
-.theme-toggle-icon {
-  transition: transform 0.4s ease;
-}
-[data-theme='dark'] .theme-toggle-btn {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
-}
-[data-theme='dark'] .theme-toggle-btn:hover {
-  color: #fff;
-}
-
 /* Logo - Premium */
 
 .app-logo {

@@ -4,9 +4,18 @@ import { render, screen } from "./test/testUtils";
 
 import App from "./App";
 
-// Only mock remaining routed page components (Dashboard & History removed)
+// Mock the page components
+
+vi.mock("./pages/DashboardPage", () => ({
+  default: () => <div data-testid="dashboard-page">Dashboard Page</div>,
+}));
+
 vi.mock("./pages/TicketDetailPage", () => ({
   default: () => <div data-testid="ticket-detail-page">Ticket Detail Page</div>,
+}));
+
+vi.mock("./pages/HistoryPage", () => ({
+  default: () => <div data-testid="history-page">History Page</div>,
 }));
 
 describe("App", () => {
@@ -18,7 +27,15 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
-  // Navigation links removed per user request; test intentionally omitted.
+  it("should render navigation links", () => {
+    render(<App />);
+
+    expect(
+      screen.getByRole("link", { name: /Dashboard/i })
+    ).toBeInTheDocument();
+
+    expect(screen.getByRole("link", { name: /History/i })).toBeInTheDocument();
+  });
 
   it("should render footer", () => {
     render(<App />);
@@ -28,9 +45,10 @@ describe("App", () => {
     expect(screen.getByText(/2025/i)).toBeInTheDocument();
   });
 
-  it("should render home placeholder by default", () => {
+  it("should render dashboard page by default", () => {
     render(<App />);
-    expect(screen.getByText(/Welcome to TicketGenie/i)).toBeInTheDocument();
+
+    expect(screen.getByTestId("dashboard-page")).toBeInTheDocument();
   });
 
   it("should have app class", () => {
@@ -65,5 +83,11 @@ describe("App", () => {
     expect(logoLink).toHaveAttribute("href", "/");
   });
 
-  // History link removed; test removed.
+  it("should link to history page", () => {
+    render(<App />);
+
+    const historyLink = screen.getByRole("link", { name: /History/i });
+
+    expect(historyLink).toHaveAttribute("href", "/history");
+  });
 });

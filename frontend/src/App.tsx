@@ -1,5 +1,8 @@
 import { Route, Routes, Link, useLocation } from "react-router-dom";
+
 import { useState, useEffect } from "react";
+
+import DashboardPage from "./pages/DashboardPage";
 
 import TicketDetailPage from "./pages/TicketDetailPage";
 
@@ -37,14 +40,6 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => 'light');
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
-
-  const toggleTheme = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'));
-
   return (
     <div className="app">
       <header className="app-header">
@@ -52,30 +47,22 @@ function App() {
           <Link to="/" className="app-logo">
             TicketGenie
           </Link>
-          {/* Navigation removed per user request (dashboard & history). */}
-          <button
-            type="button"
-            aria-label="Toggle theme"
-            className="theme-toggle-btn btn-secondary"
-            onClick={toggleTheme}
-          >
-            <span className="theme-toggle-icon" role="img" aria-hidden="true">
-              {theme === 'light' ? '🌙' : '☀️'}
-            </span>
-          </button>
         </div>
       </header>
+
       <main className="app-main">
         <PageTransition>
           <Routes>
-            {/* Minimal home placeholder after removing dashboard/history pages */}
-            <Route path="/" element={<div className="home-placeholder">Welcome to TicketGenie</div>} />
+            <Route path="/" element={<DashboardPage />} />
+
             <Route path="/ticket/:id" element={<TicketDetailPage />} />
           </Routes>
         </PageTransition>
       </main>
+
       <footer className="app-footer">
         <p>TicketGenie</p>
+
         <p>&copy; 2025 AI-Powered IT Support - Developed for Hackathon 2025</p>
       </footer>
     </div>
