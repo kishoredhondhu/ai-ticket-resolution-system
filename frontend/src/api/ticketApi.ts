@@ -1,8 +1,11 @@
 import { type Ticket } from "../types/ticketTypes";
 
 export async function uploadTicket(data: FormData): Promise<Ticket> {
+  const file = data.get("file");
+  if (!file) {
+    throw new Error("No file provided");
+  }
   const description = data.get("description") as string;
-
   const category = data.get("category") as string;
 
   // Process ticket locally - no backend needed
