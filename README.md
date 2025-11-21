@@ -178,8 +178,8 @@ Example request:
 curl -X POST http://localhost:8000/api/suggest-resolution \
   -H "Content-Type: application/json" \
   -d '{
-        "category": "Collaboration",
-        "priority": "High",
+        "category": "Application",
+        "priority": "Critical",
         "description": "Teams is stuck at signing in"
       }'
 ```
